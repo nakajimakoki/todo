@@ -8,7 +8,7 @@ function App() {
     fetch('http://localhost:8080/todos')
       .then(response => {
         if (!response.ok) {
-          throw new Error('データ取得に失敗しました!!!!!!);
+          throw new Error('データ取得に失敗しました!!!!!!!!!!!!!!!);
         }
         return response.json();
       })
