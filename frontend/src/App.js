@@ -1,5 +1,6 @@
 // frontend/src/App.js
 import React, { useEffect, useState } from 'react';
+import './App.css'; // CSSを読み込み
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -17,25 +18,13 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-      <h1 style={{ textAlign: 'center', color: '#333' }}>Todo一覧</h1>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+    <div className="todo-container">
+      <h1 className="todo-title">📝 Todo一覧</h1>
+      <ul className="todo-list">
         {todos.map(todo => (
-          <li
-            key={todo.id}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '10px',
-              margin: '10px 0',
-              backgroundColor: '#f9f9f9',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}
-          >
+          <li key={todo.id} className="todo-item">
             <span>{todo.title}</span>
-            <span style={{ fontSize: '20px' }}>
+            <span className="todo-status">
               {todo.completed ? '✅' : '❌'}
             </span>
           </li>
