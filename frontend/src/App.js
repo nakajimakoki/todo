@@ -20,13 +20,30 @@ function App() {
 
   const handleAddTodo = () => {
     if (!newTodo.trim()) return; // 空文字を追加しない
-    const newItem = {
-      id: Date.now(), // 一時的に時間でID生成
-      title: newTodo,
-      completed: false,
-    };
-    setTodos([...todos, newItem]);
-    setNewTodo(''); // 入力欄をリセット
+
+  const todoToAdd = {
+    title: newTodo,
+    completed: false,
+  };
+  // サーバーにPOSTリクエスト
+  fetch('http://localhost:8080/todos', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(todoToAdd),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('ToDoの追加に失敗しました');
+      }
+      return response.json(); // 保存されたオブジェクトが帰る想定
+    })
+    .then(savedTodo => {
+      setTodos([...todos, savedTodo]); // ← レスポンスのオブジェクトを追加
+      setNewTodo(''); //入力欄クリア
+    })
+    .catch(error => console.error(error));
   };
 
   return (
