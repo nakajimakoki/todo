@@ -66,3 +66,29 @@
 .todo-status {
   font-size: 20px;
 }
+
+.todo-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+}
+
+.todo-add-button {
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.todo-add-button:hover {
+  background-color: #45a049;
+}
