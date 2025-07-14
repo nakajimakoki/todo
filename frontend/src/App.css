@@ -40,6 +40,11 @@
 .todo-container {
   padding: 20px;
   font-family: sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
 .todo-title {
@@ -50,6 +55,7 @@
 .todo-list {
   list-style: none;
   padding: 0;
+   margin: 0;
 }
 
 .todo-item {
