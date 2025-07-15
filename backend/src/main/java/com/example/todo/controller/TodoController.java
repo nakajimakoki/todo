@@ -2,8 +2,10 @@ package com.example.todo.controller;
 
 import com.example.todo.model.Todo;
 import com.example.todo.repository.TodoRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -39,15 +41,13 @@ public class TodoController {
     }
 
     // 既存のTodoを編集
-    @PutMapping("/{id}")
-    public ResponseEntity<Todo> updateTodo(@PathVariable Long id, @RequestBody Todo updatedTodo) {
-        return todoRepository.findById(id)
-                .map(todo -> {
-                    todo.setTitle(updatedTodo.getTitle());
-                    todo.setCompleted(updatedTodo.isCompleted());
-                    return ResponseEntity.ok(todoRepository.save(todo));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping("/todos/{id}")
+    public Todo updateTodo(@PathVariable Long id, @RequestBody Todo todo) {
+        return todoRepository.findById(id).map(t -> {
+            t.setTitle(todo.getTitle());
+            t.setCompleted(todo.isCompleted());
+            return todoRepository.save(t);
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     // 削除
