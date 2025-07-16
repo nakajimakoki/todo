@@ -64,11 +64,16 @@ function App() {
 
   // 削除処理
   const handleDelete = (id) => {
+    const confirmed = window.confirm("削除してもよろしいですか？");
+
+    if (!confirmed) return;
+
     fetch(`http://localhost:8080/todos/${id}`, {
       method: "DELETE",
     })
       .then((res) => {
         if (!res.ok) throw new Error("削除に失敗しました");
+
         // 削除成功時：対象のオブジェクトをstateから除外
         setTodos((prev) => prev.filter((todo) => todo.id !== id));
       })
@@ -122,16 +127,18 @@ function App() {
         {todos.map((todo) => (
           <li key={todo.id}>
             {editingId === todo.id ? (
+              // 編集中表示（入力欄＋保存・キャンセル） editingId にそのToDoのIDがセットされている状態
               <>
                 <input
                   type="text"
                   value={editingText}
-                  onChange={(e) => setEditingText(e.target.value)}
+                  onChange={(e) => setEditingText(e.target.value)} //e.target⇒<input> 要素自体
                 />
                 <button onClick={() => handleUpdate(todo.id)}>保存</button>
                 <button onClick={() => setEditingId(null)}>キャンセル</button>
               </>
             ) : (
+              // 通常表示（タイトル＋編集・削除ボタン）
               <>
                 <span>
                   <input
@@ -150,7 +157,7 @@ function App() {
                 </span>
                 <button
                   onClick={() => {
-                    setEditingId(todo.id);
+                    setEditingId(todo.id); // 編集モードONに
                     setEditingText(todo.title);
                   }}
                 >
