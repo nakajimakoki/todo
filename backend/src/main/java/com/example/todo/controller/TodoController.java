@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/todos")
+@RequestMapping("/todos") // 全てのエンドポイントの共通URL
 public class TodoController {
 
     private final TodoRepository todoRepository;
@@ -41,24 +41,13 @@ public class TodoController {
     }
 
     // 既存のTodoを編集
-    @PutMapping("/todos/{id}")
+    @PutMapping("/{id}")
     public Todo updateTodo(@PathVariable Long id, @RequestBody Todo todo) {
         return todoRepository.findById(id).map(t -> {
             t.setTitle(todo.getTitle());
             t.setCompleted(todo.isCompleted());
             return todoRepository.save(t);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    // 削除
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
-        if (todoRepository.existsById(id)) {
-            todoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 
 }

@@ -3,25 +3,25 @@ import React, { useEffect, useState } from 'react';
 import './App.css'; // CSSを読み込み
 
 function App() {
-  const [todos, setTodos] = useState([]); // ToDo一覧の状態
+  const [todos, setTodos] = useState([]); // 一覧の状態
   const [newTodo, setNewTodo] = useState(''); // ① 入力欄用の状態
 
-  // 初回にToDo一覧を取得
+  // 初回に一覧を取得
   useEffect(() => {
     fetch('http://localhost:8080/todos')
       .then(res => {
         if (!res.ok) throw new Error('データ取得に失敗しました');
         return res.json(); // JSONとしてパース
       })
-      .then(setTodos) // ToDo一覧を状態にセット
+      .then(setTodos) // 一覧を状態にセット
       .catch(console.error); // エラー時はコンソールに出力
   }, []);
 
-  // ToDo追加処理
+  // 追加処理
   const handleAddTodo = () => {
     if (!newTodo.trim()) return; // 空白だけなら何もしない
 
-    const todoToAdd = { title: newTodo, completed: false }; // 新規ToDoオブジェクト
+    const todoToAdd = { title: newTodo, completed: false }; // 新規オブジェクト
 
     fetch('http://localhost:8080/todos', {
       method: 'POST',
@@ -30,7 +30,7 @@ function App() {
     })
       .then(res => {
         if (!res.ok) throw new Error('追加に失敗しました');
-        return res.json(); // サーバーから返されたToDoをJSONで取得
+        return res.json(); // サーバーから返されたオブジェクトをJSONで取得
       })
       .then(saved => {
         setTodos(prev => [...prev, saved]); //「今の状態（prev）」を引数として受け取り、それを元に新しい状態を返す（関数型更新）
@@ -41,7 +41,7 @@ function App() {
 
   // ToDoの完了状態を切り替える処理
   const handleToggle = (todo) => {
-    const updated = { ...todo, completed: !todo.completed }; // completedを反転した新しいToDo
+    const updated = { ...todo, completed: !todo.completed }; // completedを反転した新しいオブジェクト
 
     fetch(`http://localhost:8080/todos/${todo.id}`, {
       method: 'PUT',
@@ -50,7 +50,7 @@ function App() {
     })
       .then(res => {
         if (!res.ok) throw new Error('更新に失敗しました');
-        return res.json(); // 更新後のToDoを取得
+        return res.json(); // 更新後のオブジェクトを取得
       })
       .then(updatedTodo => {
         setTodos(prev =>
