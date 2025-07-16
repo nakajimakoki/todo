@@ -4,7 +4,9 @@ import "./App.css"; // CSSを読み込み
 
 function App() {
   const [todos, setTodos] = useState([]); // 一覧の状態
-  const [newTodo, setNewTodo] = useState(""); // ① 入力欄用の状態
+  const [newTodo, setNewTodo] = useState(""); // 入力欄用の状態
+  const [editingId, setEditingId] = useState(null); // 編集中のTodo ID
+  const [editingText, setEditingText] = useState(""); // 編集用テキスト
 
   // 初回に一覧を取得
   useEffect(() => {
@@ -39,7 +41,7 @@ function App() {
       .catch(console.error);
   };
 
-  // 完了状態を切り替える処理
+  // 完了状態を切り替える処理（取り消し線）
   const handleToggle = (todo) => {
     const updated = { ...todo, completed: !todo.completed }; // completedを反転した新しいオブジェクト
 
@@ -73,6 +75,26 @@ function App() {
       .catch(console.error);
   };
 
+  // 編集処理
+  const handleUpdate = (id) => {
+    fetch(`http://localhost:8080/todos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: editingText,
+        completed: todos.find((t) => t.id === id).completed,
+      }),
+    })
+      .then((response) => response.json())
+      .then((updatedTodo) => {
+        setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
+        setEditingId(null);
+        setEditingText("");
+      });
+  };
+
   return (
     <div className="todo-container">
       <h1 className="todo-title">📝 Todo一覧</h1>
@@ -98,26 +120,46 @@ function App() {
       {/* ToDoリスト表示 */}
       <ul className="todo-list">
         {todos.map((todo) => (
-          <div key={todo.id}>
-            <input
-              type="checkbox"
-              checked={todo.completed} // 完了状態に応じてチェック
-              onChange={() => handleToggle(todo)} // チェック切り替え処理
-            />
-            <span
-              style={{
-                textDecoration: todo.completed ? "line-through" : "none",
-              }}
-            >
-              {todo.title}
-            </span>
-            <button
-              onClick={() => handleDelete(todo.id)}
-              className="todo-delete-button"
-            >
-              削除
-            </button>
-          </div>
+          <li key={todo.id}>
+            {editingId === todo.id ? (
+              <>
+                <input
+                  type="text"
+                  value={editingText}
+                  onChange={(e) => setEditingText(e.target.value)}
+                />
+                <button onClick={() => handleUpdate(todo.id)}>保存</button>
+                <button onClick={() => setEditingId(null)}>キャンセル</button>
+              </>
+            ) : (
+              <>
+                <span>
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={() => handleToggle(todo)}
+                  />
+                  <span
+                    style={{
+                      textDecoration: todo.completed ? "line-through" : "none",
+                      marginLeft: "8px",
+                    }}
+                  >
+                    {todo.title}
+                  </span>
+                </span>
+                <button
+                  onClick={() => {
+                    setEditingId(todo.id);
+                    setEditingText(todo.title);
+                  }}
+                >
+                  編集
+                </button>
+                <button onClick={() => handleDelete(todo.id)}>削除</button>
+              </>
+            )}
+          </li>
         ))}
       </ul>
     </div>
