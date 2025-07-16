@@ -39,7 +39,7 @@ function App() {
       .catch(console.error);
   };
 
-  // ToDoの完了状態を切り替える処理
+  // 完了状態を切り替える処理
   const handleToggle = (todo) => {
     const updated = { ...todo, completed: !todo.completed }; // completedを反転した新しいオブジェクト
 
@@ -58,6 +58,19 @@ function App() {
         );
       })
       .catch(console.error); // エラーがあれば表示
+  };
+
+  // 削除処理
+  const handleDelete = (id) => {
+    fetch(`http://localhost:8080/todos/${id}`, {
+      method: 'DELETE',
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('削除に失敗しました');
+        // 削除成功時：対象のオブジェクトをstateから除外
+        setTodos(prev => prev.filter(todo => todo.id !== id));
+      })
+      .catch(console.error);
   };
 
   return (
@@ -94,6 +107,9 @@ function App() {
             <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
               {todo.title}
             </span>
+          <button onClick={() => handleDelete(todo.id)} className="todo-delete-button">
+            削除
+          </button>
           </div>
         ))}
       </ul>
