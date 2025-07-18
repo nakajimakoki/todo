@@ -1,6 +1,8 @@
 // frontend/src/App.js
 import React, { useEffect, useState } from "react";
 import "./App.css"; // CSSを読み込み
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [todos, setTodos] = useState([]); // 一覧の状態
@@ -21,10 +23,8 @@ function App() {
 
   // Todo追加処理
   const handleAddTodo = () => {
-    console.log(newTodo);
-
     if (!newTodo.trim()) {
-      alert("内容を入力してください");
+      toast.error("内容を入力してください");
       return;
     }
 
@@ -40,6 +40,7 @@ function App() {
       .then((saved) => {
         setTodos((prev) => [...prev, saved]); //「今の状態（prev）」を引数として受け取り、それを元に新しい状態を返す（関数型更新）
         setNewTodo(""); // 入力欄をリセット
+        toast.success("ToDoを追加しました");
       })
       .catch(console.error);
   };
@@ -79,8 +80,12 @@ function App() {
 
         // 削除成功時：対象のオブジェクトをstateから除外
         setTodos((prev) => prev.filter((todo) => todo.id !== id));
+        toast.success("ToDoを削除しました");
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error(error);
+        toast.error("削除に失敗しました。");
+      });
   };
 
   // 編集処理
@@ -106,7 +111,6 @@ function App() {
   return (
     <div className="todo-container">
       <h1 className="todo-title">📝 Todo一覧</h1>
-
       {/* 入力フォーム */}
       <div className="todo-input-group">
         <input
@@ -120,7 +124,6 @@ function App() {
           追加
         </button>
       </div>
-
       {/* ToDoリスト表示 */}
       <ul className="todo-list">
         {todos.map((todo) => (
@@ -168,6 +171,7 @@ function App() {
           </li>
         ))}
       </ul>
+      <ToastContainer /> {/* 通知コンテナを1回だけ設置 */}
     </div>
   );
 }
