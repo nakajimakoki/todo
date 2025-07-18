@@ -22,27 +22,30 @@ function App() {
   }, []);
 
   // Todo追加処理
-  const handleAddTodo = () => {
+  const handleAddTodo = async () => {
     if (!newTodo.trim()) {
       toast.error("内容を入力してください");
       return;
     }
 
-    fetch("http://localhost:8080/todos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: newTodo, completed: false }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("追加に失敗しました");
-        return res.json(); // サーバーから返されたオブジェクトをJSONで取得
-      })
-      .then((saved) => {
-        setTodos((prev) => [...prev, saved]); //「今の状態（prev）」を引数として受け取り、それを元に新しい状態を返す（関数型更新）
-        setNewTodo(""); // 入力欄をリセット
-        toast.success("ToDoを追加しました");
-      })
-      .catch(console.error);
+    try {
+      const res = await fetch("http://localhost:8080/todos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newTodo, completed: false }),
+      });
+
+      if (!res.ok) throw new Error("追加に失敗しました。");
+
+      const saved = await res.json();
+      setTodos((prev) => [...prev, saved]);
+      setNewTodo("");
+      toast.success("Todoを追加しました。");
+      console.log("追加成功", saved);
+    } catch (error) {
+      console.error(error);
+      toast.error("Todoの追加に失敗しました。");
+    }
   };
 
   // 完了状態を切り替える処理（取り消し線）
