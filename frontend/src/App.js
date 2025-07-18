@@ -49,66 +49,90 @@ function App() {
   };
 
   // 完了状態を切り替える処理（取り消し線）
-  const handleToggle = (todo) => {
+  const handleToggle = async (todo) => {
     const updated = { ...todo, completed: !todo.completed }; // completedを反転した新しいオブジェクト
 
-    fetch(`http://localhost:8080/todos/${todo.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updated),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("更新に失敗しました");
-        return res.json(); // 更新後のオブジェクトを取得
-      })
-      .then((updatedTodo) => {
-        setTodos(
-          (prev) => prev.map((t) => (t.id === updatedTodo.id ? updatedTodo : t)) // idが一致したものだけ差し替え
-        );
-      })
-      .catch(console.error); // エラーがあれば表示
+    try {
+      const res = await fetch(`http://localhost:8080/todos/${todo.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+
+      if (!res.ok) {
+        throw new Error("更新に失敗しました");
+      }
+
+      const updatedTodo = await res.json();
+
+      setTodos(
+        (prev) => prev.map((t) => (t.id === updatedTodo.id ? updatedTodo : t)) // idが一致したものだけ差し替え
+      );
+      toast.info("ToDoの完了状態を更新しました");
+      console.log(
+        `ToDo ID ${todo.id} の完了状態を ${
+          updated.completed ? "完了" : "未完了"
+        } に変更`
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error("完了状態の更新に失敗しました");
+    }
   };
 
   // 削除処理
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmed = window.confirm("削除してもよろしいですか？");
-
     if (!confirmed) return;
 
-    fetch(`http://localhost:8080/todos/${id}`, {
-      method: "DELETE",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("削除に失敗しました");
-
-        // 削除成功時：対象のオブジェクトをstateから除外
-        setTodos((prev) => prev.filter((todo) => todo.id !== id));
-        toast.success("ToDoを削除しました");
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("削除に失敗しました。");
+    try {
+      const res = await fetch(`http://localhost:8080/todos/${id}`, {
+        method: "DELETE",
       });
+
+      if (!res.ok) {
+        throw new Error("削除に失敗しました。");
+      }
+
+      // 削除成功時：対象のオブジェクトをstateから除外
+      setTodos((prev) => prev.filter((todo) => todo.id !== id));
+      toast.success("ToDoを削除しました");
+      console.log(`ToDo ID ${id}を削除しました。`);
+    } catch (error) {
+      console.error(error);
+      toast.error("削除に失敗しました。");
+    }
   };
 
   // 編集処理
-  const handleUpdate = (id) => {
-    fetch(`http://localhost:8080/todos/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: editingText,
-        completed: todos.find((t) => t.id === id).completed,
-      }),
-    })
-      .then((response) => response.json())
-      .then((updatedTodo) => {
-        setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
-        setEditingId(null);
-        setEditingText("");
+  const handleUpdate = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: editingText,
+          completed: todos.find((t) => t.id === id).completed,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("更新に失敗しました");
+      }
+
+      const updatedTodo = await response.json();
+
+      setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
+      setEditingId(null);
+      setEditingText("");
+      toast.info("ToDoを更新しました");
+      console.log(`ToDo ID ${id} を更新しました`);
+    } catch (error) {
+      console.error(error);
+      toast.error("更新に失敗しました。");
+    }
   };
 
   return (
