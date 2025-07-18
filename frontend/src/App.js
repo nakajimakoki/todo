@@ -21,14 +21,17 @@ function App() {
 
   // Todo追加処理
   const handleAddTodo = () => {
-    if (!newTodo.trim()) return; // 空白だけなら何もしない
+    console.log(newTodo);
 
-    const todoToAdd = { title: newTodo, completed: false }; // 新規オブジェクト
+    if (!newTodo.trim()) {
+      alert("内容を入力してください");
+      return;
+    }
 
     fetch("http://localhost:8080/todos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(todoToAdd),
+      body: JSON.stringify({ title: newTodo, completed: false }),
     })
       .then((res) => {
         if (!res.ok) throw new Error("追加に失敗しました");
@@ -113,11 +116,7 @@ function App() {
           onChange={(e) => setNewTodo(e.target.value)} // 入力値の更新
           className="todo-input"
         />
-        <button
-          onClick={handleAddTodo}
-          className="todo-add-button"
-          disabled={!newTodo.trim()} // 空白のみの入力では無効
-        >
+        <button onClick={handleAddTodo} className="todo-add-button">
           追加
         </button>
       </div>
