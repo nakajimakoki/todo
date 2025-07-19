@@ -10,6 +10,22 @@ function App() {
   const [editingId, setEditingId] = useState(null); // 編集中のTodo ID
   const [editingText, setEditingText] = useState(""); // 編集用テキスト
 
+  const toastSuccess = (message) =>
+    toast.success(message, {
+      style: {
+        background: "#d1e7dd",
+        color: "#0f5132",
+      },
+    });
+
+  const toastError = (message) =>
+    toast.error(message, {
+      style: {
+        background: "#f8d7da",
+        color: "#842029",
+      },
+    });
+
   // 初回に一覧を取得
   useEffect(() => {
     const fetchTodos = async () => {
@@ -21,7 +37,7 @@ function App() {
         console.log("ToDo一覧を取得しました。", data);
       } catch (err) {
         console.error("ToDoの取得に失敗しました:", err);
-        toast.error("ToDoの取得に失敗しました。");
+        toastError("ToDoの取得に失敗しました。");
       }
     };
     fetchTodos();
@@ -45,7 +61,7 @@ function App() {
   const handleAddTodo = async () => {
     const error = validateTodoInput(newTodo);
     if (error) {
-      toast.error(error);
+      toastError(error);
       return;
     }
 
@@ -61,11 +77,11 @@ function App() {
       const saved = await res.json();
       setTodos((prev) => [...prev, saved]);
       setNewTodo("");
-      toast.success("Todoを追加しました。");
+      toastSuccess("Todoを追加しました。");
       console.log("追加成功", saved);
     } catch (error) {
       console.error(error);
-      toast.error("Todoの追加に失敗しました。");
+      toastError("Todoの追加に失敗しました。");
     }
   };
 
@@ -89,7 +105,6 @@ function App() {
       setTodos(
         (prev) => prev.map((t) => (t.id === updatedTodo.id ? updatedTodo : t)) // idが一致したものだけ差し替え
       );
-      toast.info("ToDoの完了状態を更新しました");
       console.log(
         `ToDo ID ${todo.id} の完了状態を ${
           updated.completed ? "完了" : "未完了"
@@ -97,7 +112,7 @@ function App() {
       );
     } catch (error) {
       console.error(error);
-      toast.error("完了状態の更新に失敗しました");
+      toastError("完了状態の更新に失敗しました");
     }
   };
 
@@ -117,11 +132,11 @@ function App() {
 
       // 削除成功時：対象のオブジェクトをstateから除外
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
-      toast.success("ToDoを削除しました");
+      toastSuccess("ToDoを削除しました");
       console.log(`ToDo ID ${id}を削除しました。`);
     } catch (error) {
       console.error(error);
-      toast.error("削除に失敗しました。");
+      toastError("削除に失敗しました。");
     }
   };
 
@@ -130,7 +145,7 @@ function App() {
     const { id, completed } = todo;
     const error = validateTodoInput(editingText);
     if (error) {
-      toast.error(error);
+      toastError(error);
       return;
     }
 
@@ -152,11 +167,11 @@ function App() {
       setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
       setEditingId(null);
       setEditingText("");
-      toast.info("ToDoを更新しました");
+      toastSuccess("ToDoを更新しました");
       console.log(`ToDo ID ${id} を更新しました`);
     } catch (error) {
       console.error(error);
-      toast.error("更新に失敗しました。");
+      toastError("更新に失敗しました。");
     }
   };
 
@@ -228,7 +243,17 @@ function App() {
           </li>
         ))}
       </ul>
-      <ToastContainer /> {/* 通知コンテナを1回だけ設置 */}
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
