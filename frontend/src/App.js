@@ -111,17 +111,15 @@ function App() {
   };
 
   // 編集処理
-  const handleUpdate = async (id) => {
+  const handleUpdate = async (todo) => {
+    const { id, completed } = todo;
     try {
       const response = await fetch(`http://localhost:8080/todos/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title: editingText,
-          completed: todos.find((t) => t.id === id).completed,
-        }),
+        body: JSON.stringify({ title: editingText, completed }),
       });
 
       if (!response.ok) {
@@ -168,8 +166,13 @@ function App() {
                   type="text"
                   value={editingText}
                   onChange={(e) => setEditingText(e.target.value)} //e.target⇒<input> 要素自体
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleUpdate(todo);
+                    }
+                  }}
                 />
-                <button onClick={() => handleUpdate(todo.id)}>保存</button>
+                <button onClick={() => handleUpdate(todo)}>保存</button>
                 <button onClick={() => setEditingId(null)}>キャンセル</button>
               </>
             ) : (
