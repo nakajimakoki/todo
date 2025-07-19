@@ -1,7 +1,8 @@
 // frontend/src/App.js
 import React, { useEffect, useState } from "react";
 import "./App.css"; // CSSを読み込み
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { toastSuccess, toastError } from "./utils/toast";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -9,22 +10,6 @@ function App() {
   const [newTodo, setNewTodo] = useState(""); // 入力欄用の状態
   const [editingId, setEditingId] = useState(null); // 編集中のTodo ID
   const [editingText, setEditingText] = useState(""); // 編集用テキスト
-
-  const toastSuccess = (message) =>
-    toast.success(message, {
-      style: {
-        background: "#d1e7dd",
-        color: "#0f5132",
-      },
-    });
-
-  const toastError = (message) =>
-    toast.error(message, {
-      style: {
-        background: "#f8d7da",
-        color: "#842029",
-      },
-    });
 
   // 初回に一覧を取得
   useEffect(() => {
