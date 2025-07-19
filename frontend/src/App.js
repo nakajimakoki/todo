@@ -149,7 +149,7 @@ function App() {
 
   return (
     <div className="todo-container">
-      <h1 className="todo-title">📝 Todo一覧</h1>
+      <h1 className="todo-title">Todo一覧</h1>
       {/* 入力フォーム */}
       <div className="todo-input-group">
         <input
@@ -169,14 +169,13 @@ function App() {
       ) : (
         <ul className="todo-list">
           {todos.map((todo) => (
-            <li key={todo.id}>
+            <li key={todo.id} className="todo-item">
               {editingId === todo.id ? (
-                // 編集中表示（入力欄＋保存・キャンセル） editingId にそのToDoのIDがセットされている状態
                 <>
                   <input
                     type="text"
                     value={editingText}
-                    onChange={(e) => setEditingText(e.target.value)} //e.target⇒<input> 要素自体
+                    onChange={(e) => setEditingText(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleUpdate(todo);
@@ -187,34 +186,47 @@ function App() {
                   <button onClick={() => setEditingId(null)}>キャンセル</button>
                 </>
               ) : (
-                // 通常表示（タイトル＋編集・削除ボタン）
                 <>
-                  <span>
+                  {/* 左側：チェック＋タイトル */}
+                  <div className="todo-left">
                     <input
                       type="checkbox"
                       checked={todo.completed}
                       onChange={() => handleToggle(todo)}
                     />
                     <span
+                      className="todo-title"
                       style={{
                         textDecoration: todo.completed
                           ? "line-through"
                           : "none",
-                        marginLeft: "8px",
                       }}
                     >
                       {todo.title}
                     </span>
-                  </span>
-                  <button
-                    onClick={() => {
-                      setEditingId(todo.id); // 編集モードONに
-                      setEditingText(todo.title);
-                    }}
-                  >
-                    編集
-                  </button>
-                  <button onClick={() => handleDelete(todo.id)}>削除</button>
+                  </div>
+
+                  {/* 右側：編集・削除ボタン・更新日時 */}
+                  <div className="todo-right">
+                    <button
+                      className="edit-button"
+                      onClick={() => {
+                        setEditingId(todo.id);
+                        setEditingText(todo.title);
+                      }}
+                    >
+                      編集
+                    </button>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDelete(todo.id)}
+                    >
+                      削除
+                    </button>
+                    <span className="todo-updated-at">
+                      更新: {new Date(todo.createdAt).toLocaleString("ja-JP")}
+                    </span>
+                  </div>
                 </>
               )}
             </li>

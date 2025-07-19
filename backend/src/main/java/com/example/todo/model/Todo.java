@@ -1,6 +1,9 @@
 package com.example.todo.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Todo {
@@ -10,14 +13,19 @@ public class Todo {
     private String title;
     private boolean completed;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Tokyo")
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     // デフォルトコンストラクタ（必須）
     public Todo() {
     }
 
     // テスト用
-    public Todo(String title, boolean completed) {
+    public Todo(String title, boolean completed, LocalDateTime createdAt) {
         this.title = title;
         this.completed = completed;
+        this.createdAt = createdAt;
     }
 
     // フルコンストラクタ（全フィールド指定）
@@ -50,5 +58,13 @@ public class Todo {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,6 +30,7 @@ public class TodoController {
     // POST /todos → 新しいTodoを登録する
     @PostMapping
     public Todo createTodo(@RequestBody Todo newTodo) {
+        newTodo.setCreatedAt(LocalDateTime.now());
         return todoRepository.save(newTodo);
     }
 
