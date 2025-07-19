@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css"; // CSSを読み込み
 import { ToastContainer } from "react-toastify";
 import { toastSuccess, toastError } from "./utils/toast";
+import { validateTodoInput } from "./utils/validation";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
@@ -27,20 +28,6 @@ function App() {
     };
     fetchTodos();
   }, []);
-
-  // 入力バリデーション
-  const validateTodoInput = (text) => {
-    if (!text.trim()) {
-      return "内容を入力してください";
-    }
-    if (text.includes("<") || text.includes(">")) {
-      return "不正な文字が含まれています";
-    }
-    if (text.length > 15) {
-      return "15文字以内で入力してください";
-    }
-    return null; // 問題なし
-  };
 
   // Todo追加処理
   const handleAddTodo = async () => {
