@@ -27,10 +27,25 @@ function App() {
     fetchTodos();
   }, []);
 
+  // 入力バリデーション
+  const validateTodoInput = (text) => {
+    if (!text.trim()) {
+      return "内容を入力してください";
+    }
+    if (text.includes("<") || text.includes(">")) {
+      return "不正な文字が含まれています";
+    }
+    if (text.length > 15) {
+      return "15文字以内で入力してください";
+    }
+    return null; // 問題なし
+  };
+
   // Todo追加処理
   const handleAddTodo = async () => {
-    if (!newTodo.trim()) {
-      toast.error("内容を入力してください");
+    const error = validateTodoInput(newTodo);
+    if (error) {
+      toast.error(error);
       return;
     }
 
@@ -113,6 +128,12 @@ function App() {
   // 編集処理
   const handleUpdate = async (todo) => {
     const { id, completed } = todo;
+    const error = validateTodoInput(editingText);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:8080/todos/${id}`, {
         method: "PUT",
