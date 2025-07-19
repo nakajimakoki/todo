@@ -98,3 +98,10 @@
 .todo-add-button:hover {
   background-color: #45a049;
 }
+
+.todo-empty {
+  text-align: center;
+  color: #888;
+  margin-top: 1em;
+  font-style: italic;
+}

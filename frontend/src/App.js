@@ -164,57 +164,63 @@ function App() {
         </button>
       </div>
       {/* ToDoリスト表示 */}
-      <ul className="todo-list">
-        {todos.map((todo) => (
-          <li key={todo.id}>
-            {editingId === todo.id ? (
-              // 編集中表示（入力欄＋保存・キャンセル） editingId にそのToDoのIDがセットされている状態
-              <>
-                <input
-                  type="text"
-                  value={editingText}
-                  onChange={(e) => setEditingText(e.target.value)} //e.target⇒<input> 要素自体
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleUpdate(todo);
-                    }
-                  }}
-                />
-                <button onClick={() => handleUpdate(todo)}>保存</button>
-                <button onClick={() => setEditingId(null)}>キャンセル</button>
-              </>
-            ) : (
-              // 通常表示（タイトル＋編集・削除ボタン）
-              <>
-                <span>
+      {todos.length === 0 ? (
+        <p className="todo-empty">現在、登録されているToDoはありません</p>
+      ) : (
+        <ul className="todo-list">
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              {editingId === todo.id ? (
+                // 編集中表示（入力欄＋保存・キャンセル） editingId にそのToDoのIDがセットされている状態
+                <>
                   <input
-                    type="checkbox"
-                    checked={todo.completed}
-                    onChange={() => handleToggle(todo)}
+                    type="text"
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)} //e.target⇒<input> 要素自体
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleUpdate(todo);
+                      }
+                    }}
                   />
-                  <span
-                    style={{
-                      textDecoration: todo.completed ? "line-through" : "none",
-                      marginLeft: "8px",
+                  <button onClick={() => handleUpdate(todo)}>保存</button>
+                  <button onClick={() => setEditingId(null)}>キャンセル</button>
+                </>
+              ) : (
+                // 通常表示（タイトル＋編集・削除ボタン）
+                <>
+                  <span>
+                    <input
+                      type="checkbox"
+                      checked={todo.completed}
+                      onChange={() => handleToggle(todo)}
+                    />
+                    <span
+                      style={{
+                        textDecoration: todo.completed
+                          ? "line-through"
+                          : "none",
+                        marginLeft: "8px",
+                      }}
+                    >
+                      {todo.title}
+                    </span>
+                  </span>
+                  <button
+                    onClick={() => {
+                      setEditingId(todo.id); // 編集モードONに
+                      setEditingText(todo.title);
                     }}
                   >
-                    {todo.title}
-                  </span>
-                </span>
-                <button
-                  onClick={() => {
-                    setEditingId(todo.id); // 編集モードONに
-                    setEditingText(todo.title);
-                  }}
-                >
-                  編集
-                </button>
-                <button onClick={() => handleDelete(todo.id)}>削除</button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+                    編集
+                  </button>
+                  <button onClick={() => handleDelete(todo.id)}>削除</button>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
       <ToastContainer
         position="top-right"
         autoClose={2000}
