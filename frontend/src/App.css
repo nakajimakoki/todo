@@ -1,125 +1,201 @@
-/* ------- 共通スタイル ------- */
+/* =========================================
+   全体の基本スタイル
+========================================= */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f2f3f5;
+  color: #333;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* =========================================
+   コンテナ & タイトル
+========================================= */
 .todo-container {
-  padding: 20px;
-  font-family: sans-serif;
-  max-width: 600px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 640px;
+  margin: 40px auto;
+  padding: 24px;
+  background-color: #fff;
   border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .todo-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #222;
   text-align: center;
-  color: #333;
+  margin-bottom: 24px;
 }
 
-/* ------- 入力フォーム ------- */
+/* =========================================
+   入力フォーム
+========================================= */
 .todo-input-group {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .todo-input {
   flex: 1;
-  padding: 8px;
-  font-size: 16px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  color: #333;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.todo-input:focus {
+  background-color: #fff;
+  border-color: #5f9ea0;
+  outline: none;
 }
 
 .todo-add-button {
-  padding: 8px 16px;
-  font-size: 16px;
-  background-color: #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  font-size: 1.4rem;
+  background-color: #5f7c5b;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .todo-add-button:hover {
-  background-color: #45a049;
+  background-color: #4b6348;
 }
 
-/* ------- ToDoリスト全体 ------- */
+/* =========================================
+   リスト表示
+========================================= */
+.todo-empty {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  margin-top: 16px;
+}
+
 .todo-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.todo-empty {
-  text-align: center;
-  color: #888;
-  margin-top: 1em;
-  font-style: italic;
-}
-
-/* ------- 各ToDo項目（分割構造） ------- */
 .todo-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  margin: 10px 0;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
   border-radius: 8px;
+  transition: box-shadow 0.2s ease;
 }
 
-/* 左：チェックボックス＋タイトル */
+.todo-item:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================
+   ToDo項目（左側：チェック＋タイトル）
+========================================= */
 .todo-left {
   display: flex;
   align-items: center;
   flex: 1;
-  gap: 0.5rem;
+  gap: 10px;
   word-break: break-word;
 }
 
-.todo-title {
-  font-size: 1rem;
+.todo-left input[type="checkbox"] {
+  vertical-align: middle;
+  transform: translateY(-1px);
 }
 
-/* 右：ボタンと日時を揃えて右寄せ */
+.todo-title-text {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.4;
+  display: inline-block;
+}
+
+/* =========================================
+   ToDo項目（右側：操作ボタン＋日時）
+========================================= */
 .todo-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.5rem;
-  min-width: 220px; /* ←ボタンと日時の幅を確保 */
+  gap: 8px;
+  min-width: 240px;
 }
 
-/* ------- ボタン類 ------- */
-.edit-button,
-.delete-button {
-  padding: 0.2rem 0.6rem;
-  font-size: 0.85rem;
+.todo-updated-at {
+  font-size: 0.75rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* =========================================
+   アイコンボタン（共通）
+========================================= */
+.icon-button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  font-size: 1.25rem;
+  background-color: transparent;
+  color: inherit;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
+.icon-button:hover {
+  background-color: #e6e6e6;
+}
+
+.icon-button svg {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.icon-button:focus-visible,
+.icon-button:focus,
+.icon-button:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* =========================================
+   アイコンボタン個別カラー
+========================================= */
 .edit-button {
-  background-color: #4caf50;
-  color: white;
+  color: #4c607a;
 }
 
 .edit-button:hover {
-  background-color: #45a049;
+  color: #2d3f53;
 }
 
 .delete-button {
-  background-color: #f44336;
-  color: white;
+  color: #a94442;
 }
 
 .delete-button:hover {
-  background-color: #d32f2f;
-}
-
-/* ------- 日時 ------- */
-.todo-updated-at {
-  font-size: 0.75rem;
-  color: #666;
-  font-style: italic;
+  color: #7b2c2c;
 }

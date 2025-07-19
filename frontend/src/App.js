@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import { toastSuccess, toastError } from "./utils/toast";
 import { validateTodoInput } from "./utils/validation";
 import "react-toastify/dist/ReactToastify.css";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 function App() {
   const [todos, setTodos] = useState([]); // 一覧の状態
@@ -160,7 +161,7 @@ function App() {
           className="todo-input"
         />
         <button onClick={handleAddTodo} className="todo-add-button">
-          追加
+          ＋
         </button>
       </div>
       {/* ToDoリスト表示 */}
@@ -195,7 +196,7 @@ function App() {
                       onChange={() => handleToggle(todo)}
                     />
                     <span
-                      className="todo-title"
+                      className="todo-title-text"
                       style={{
                         textDecoration: todo.completed
                           ? "line-through"
@@ -209,19 +210,19 @@ function App() {
                   {/* 右側：編集・削除ボタン・更新日時 */}
                   <div className="todo-right">
                     <button
-                      className="edit-button"
+                      className="edit-button icon-button"
                       onClick={() => {
                         setEditingId(todo.id);
                         setEditingText(todo.title);
                       }}
                     >
-                      編集
+                      <FiEdit2 />
                     </button>
                     <button
-                      className="delete-button"
+                      className="delete-button icon-button"
                       onClick={() => handleDelete(todo.id)}
                     >
-                      削除
+                      <FiTrash2 />
                     </button>
                     <span className="todo-updated-at">
                       更新: {new Date(todo.createdAt).toLocaleString("ja-JP")}
