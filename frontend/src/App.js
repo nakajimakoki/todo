@@ -12,13 +12,19 @@ function App() {
 
   // 初回に一覧を取得
   useEffect(() => {
-    fetch("http://localhost:8080/todos")
-      .then((res) => {
-        if (!res.ok) throw new Error("データ取得に失敗しました");
-        return res.json(); // JSONとしてパース
-      })
-      .then(setTodos) // 一覧を状態にセット
-      .catch(console.error); // エラー時はコンソールに出力
+    const fetchTodos = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/todos");
+        if (!res.ok) throw new Error("データの取得に失敗しました。");
+        const data = await res.json();
+        setTodos(data);
+        console.log("ToDo一覧を取得しました。", data);
+      } catch (err) {
+        console.error("ToDoの取得に失敗しました:", err);
+        toast.error("ToDoの取得に失敗しました。");
+      }
+    };
+    fetchTodos();
   }, []);
 
   // Todo追加処理
