@@ -31,6 +31,7 @@ public class TodoController {
     @PostMapping
     public Todo createTodo(@RequestBody Todo newTodo) {
         newTodo.setCreatedAt(LocalDateTime.now());
+        newTodo.setUpdatedAt(LocalDateTime.now());
         return todoRepository.save(newTodo);
     }
 
@@ -48,6 +49,7 @@ public class TodoController {
         return todoRepository.findById(id).map(t -> {
             t.setTitle(todo.getTitle());
             t.setCompleted(todo.isCompleted());
+            t.setUpdatedAt(LocalDateTime.now());
             return todoRepository.save(t);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

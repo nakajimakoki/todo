@@ -121,7 +121,7 @@ function App() {
       toastError(error);
       return;
     }
-    if (editingText === todo.title) {
+    if (editingText === title) {
       return;
     }
 
@@ -153,7 +153,7 @@ function App() {
 
   return (
     <div className="todo-container">
-      <h1 className="todo-title">Todo一覧</h1>
+      <h1 className="todo-title">ToDo一覧</h1>
       {/* 入力フォーム */}
       <div className="todo-input-group">
         <input
@@ -240,9 +240,16 @@ function App() {
                     >
                       <FiTrash2 />
                     </button>
-                    <span className="todo-updated-at">
-                      更新: {new Date(todo.createdAt).toLocaleString("ja-JP")}
-                    </span>
+                    <div className="todo-dates">
+                      <div>
+                        作成：{" "}
+                        {new Date(todo.createdAt).toLocaleString("ja-JP")}
+                      </div>
+                      <div>
+                        更新：{" "}
+                        {new Date(todo.updatedAt).toLocaleString("ja-JP")}
+                      </div>
+                    </div>
                   </>
                 )}
               </div>

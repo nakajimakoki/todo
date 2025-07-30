@@ -18,7 +18,7 @@ public class DataLoader {
     @Bean
     public CommandLineRunner loadData(TodoRepository repository) {
         return args -> {
-            repository.save(new Todo("初期データ1", false, LocalDateTime.now()));
+            repository.save(new Todo("初期データ1", false, LocalDateTime.now(), LocalDateTime.now()));
         };
     }
 }

@@ -14,25 +14,23 @@ public class Todo {
     private boolean completed;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Tokyo")
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Tokyo")
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     // デフォルトコンストラクタ（必須）
     public Todo() {
     }
 
-    // テスト用
-    public Todo(String title, boolean completed, LocalDateTime createdAt) {
+    // フルコンストラクタ（全フィールド指定）
+    public Todo(String title, boolean completed, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.title = title;
         this.completed = completed;
         this.createdAt = createdAt;
-    }
-
-    // フルコンストラクタ（全フィールド指定）
-    public Todo(Long id, String title, boolean completed) {
-        this.id = id;
-        this.title = title;
-        this.completed = completed;
+        this.updatedAt = updatedAt;
     }
 
     // Getter/Setter
@@ -66,5 +64,13 @@ public class Todo {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
