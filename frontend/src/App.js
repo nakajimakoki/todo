@@ -171,44 +171,55 @@ function App() {
         <ul className="todo-list">
           {todos.map((todo) => (
             <li key={todo.id} className="todo-item">
-              {editingId === todo.id ? (
-                <>
+              <div className="todo-left">
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => handleToggle(todo)}
+                />
+
+                {editingId === todo.id ? (
                   <input
                     type="text"
                     value={editingText}
+                    autoFocus
                     onChange={(e) => setEditingText(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleUpdate(todo);
-                      }
+                      if (e.key === "Enter") handleUpdate(todo);
+                      if (e.key === "Escape") setEditingId(null);
                     }}
+                    className="todo-edit-input"
                   />
-                  <button onClick={() => handleUpdate(todo)}>保存</button>
-                  <button onClick={() => setEditingId(null)}>キャンセル</button>
-                </>
-              ) : (
-                <>
-                  {/* 左側：チェック＋タイトル */}
-                  <div className="todo-left">
-                    <input
-                      type="checkbox"
-                      checked={todo.completed}
-                      onChange={() => handleToggle(todo)}
-                    />
-                    <span
-                      className="todo-title-text"
-                      style={{
-                        textDecoration: todo.completed
-                          ? "line-through"
-                          : "none",
-                      }}
-                    >
-                      {todo.title}
-                    </span>
-                  </div>
+                ) : (
+                  <span
+                    className="todo-title-text"
+                    style={{
+                      textDecoration: todo.completed ? "line-through" : "none",
+                    }}
+                  >
+                    {todo.title}
+                  </span>
+                )}
+              </div>
 
-                  {/* 右側：編集・削除ボタン・更新日時 */}
-                  <div className="todo-right">
+              <div className="todo-right">
+                {editingId === todo.id ? (
+                  <>
+                    <button
+                      className="save-button icon-button"
+                      onClick={() => handleUpdate(todo)}
+                    >
+                      保存
+                    </button>
+                    <button
+                      className="cancel-button icon-button"
+                      onClick={() => setEditingId(null)}
+                    >
+                      キャンセル
+                    </button>
+                  </>
+                ) : (
+                  <>
                     <button
                       className="edit-button icon-button"
                       onClick={() => {
@@ -227,9 +238,9 @@ function App() {
                     <span className="todo-updated-at">
                       更新: {new Date(todo.createdAt).toLocaleString("ja-JP")}
                     </span>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
+              </div>
             </li>
           ))}
         </ul>

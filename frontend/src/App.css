@@ -199,3 +199,75 @@ body {
 .delete-button:hover {
   color: #7b2c2c;
 }
+
+/* =========================================
+   編集モード：左側の入力欄
+========================================= */
+.todo-edit-input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.2s ease;
+}
+
+.todo-edit-input:focus {
+  border-color: #5f9ea0;
+  box-shadow: 0 0 4px rgba(95, 158, 160, 0.3);
+  outline: none;
+}
+
+/* =========================================
+   編集モード：右側の保存/キャンセルボタン
+========================================= */
+.save-button,
+.cancel-button {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #3e8e41;
+  transform: translateY(-1px);
+}
+
+.cancel-button {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #b3b3b3;
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   編集モード時の.todo-right調整
+========================================= */
+.todo-right.editing {
+  gap: 10px;
+  min-width: auto; /* 保存/キャンセルに合わせて柔軟に */
+}
+
+/* =========================================
+   通常の.todo-right（アイコン配置）
+========================================= */
+.todo-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 240px;
+}
