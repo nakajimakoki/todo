@@ -11,7 +11,7 @@ public class Todo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private boolean completed;
+    private String status;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Tokyo")
     @Column(name = "created_at", updatable = false)
@@ -26,9 +26,9 @@ public class Todo {
     }
 
     // フルコンストラクタ（全フィールド指定）
-    public Todo(String title, boolean completed, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Todo(String title, String status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.title = title;
-        this.completed = completed;
+        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -50,12 +50,12 @@ public class Todo {
         this.title = title;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {

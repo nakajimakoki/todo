@@ -32,6 +32,10 @@ public class TodoController {
     public Todo createTodo(@RequestBody Todo newTodo) {
         newTodo.setCreatedAt(LocalDateTime.now());
         newTodo.setUpdatedAt(LocalDateTime.now());
+        // 新規登録時は未着手に初期化
+        if (newTodo.getStatus() == null || newTodo.getStatus().isEmpty()) {
+            newTodo.setStatus("未着手");
+        }
         return todoRepository.save(newTodo);
     }
 
@@ -48,7 +52,7 @@ public class TodoController {
     public Todo updateTodo(@PathVariable Long id, @RequestBody Todo todo) {
         return todoRepository.findById(id).map(t -> {
             t.setTitle(todo.getTitle());
-            t.setCompleted(todo.isCompleted());
+            t.setStatus(todo.getStatus());
             t.setUpdatedAt(LocalDateTime.now());
             return todoRepository.save(t);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

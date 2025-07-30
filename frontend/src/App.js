@@ -10,6 +10,7 @@ import { FiEdit2, FiTrash2 } from "react-icons/fi";
 function App() {
   const [todos, setTodos] = useState([]); // 一覧の状態
   const [newTodo, setNewTodo] = useState(""); // 入力欄用の状態
+  const [status, setStatus] = useState(""); // ステータスの状態
   const [editingId, setEditingId] = useState(null); // 編集中のTodo ID
   const [editingText, setEditingText] = useState(""); // 編集用テキスト
 
@@ -42,7 +43,7 @@ function App() {
       const res = await fetch("http://localhost:8080/todos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTodo, completed: false }),
+        body: JSON.stringify({ title: newTodo, status: "未着手" }),
       });
 
       if (!res.ok) throw new Error("追加に失敗しました。");
@@ -58,9 +59,9 @@ function App() {
     }
   };
 
-  // 完了状態を切り替える処理（取り消し線）
-  const handleToggle = async (todo) => {
-    const updated = { ...todo, completed: !todo.completed }; // completedを反転した新しいオブジェクト
+  // ステータスを切り替える処理
+  const handleStatus = async (todo, newStatus) => {
+    const updated = { ...todo, status: newStatus };
 
     try {
       const res = await fetch(`http://localhost:8080/todos/${todo.id}`, {
@@ -78,14 +79,8 @@ function App() {
       setTodos(
         (prev) => prev.map((t) => (t.id === updatedTodo.id ? updatedTodo : t)) // idが一致したものだけ差し替え
       );
-      console.log(
-        `ToDo ID ${todo.id} の完了状態を ${
-          updated.completed ? "完了" : "未完了"
-        } に変更`
-      );
     } catch (error) {
       console.error(error);
-      toastError("完了状態の更新に失敗しました");
     }
   };
 
@@ -115,7 +110,7 @@ function App() {
 
   // 編集処理
   const handleUpdate = async (todo) => {
-    const { id, title, completed } = todo;
+    const { id, title, status } = todo;
     const error = validateTodoInput(editingText);
     if (error) {
       toastError(error);
@@ -131,7 +126,7 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title: editingText, completed }),
+        body: JSON.stringify({ title: editingText, status }),
       });
 
       if (!response.ok) {
@@ -178,32 +173,40 @@ function App() {
               className={`todo-item ${todo.completed ? "completed" : ""}`}
             >
               <div className="todo-left">
-                <input
-                  type="checkbox"
-                  checked={todo.completed}
-                  onChange={() => handleToggle(todo)}
-                />
-
                 {editingId === todo.id ? (
-                  <input
-                    type="text"
-                    value={editingText}
-                    autoFocus
-                    onChange={(e) => setEditingText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleUpdate(todo);
-                      if (e.key === "Escape") setEditingId(null);
-                    }}
-                    className="todo-edit-input"
-                  />
+                  <>
+                    {/* ステータス選択 */}
+                    <select
+                      value={todo.status}
+                      onChange={(e) => handleStatus(todo, e.target.value)}
+                      className="todo-status-select"
+                    >
+                      <option value="未着手">未着手</option>
+                      <option value="進行中">進行中</option>
+                      <option value="完了">完了</option>
+                    </select>
+
+                    {/* タイトル編集用 */}
+                    <input
+                      type="text"
+                      value={editingText}
+                      autoFocus
+                      onChange={(e) => setEditingText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleUpdate(todo);
+                        if (e.key === "Escape") setEditingId(null);
+                      }}
+                      className="todo-edit-input"
+                    />
+                  </>
                 ) : (
-                  <span
-                    className={`todo-title-text ${
-                      todo.completed ? "completed" : ""
-                    }`}
-                  >
-                    {todo.title}
-                  </span>
+                  <>
+                    {/* 通常表示：ステータスバッジ */}
+                    <span className={`todo-status status-${todo.status}`}>
+                      {todo.status}
+                    </span>
+                    <span className="todo-title-text">{todo.title}</span>
+                  </>
                 )}
               </div>
 
