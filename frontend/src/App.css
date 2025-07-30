@@ -233,16 +233,28 @@ body {
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.save-button {
+/* 未変更時（hover無効） */
+.save-button.unchanged {
+  background-color: #ccc;
+  color: #333;
+}
+
+.save-button.unchanged:hover {
+  background-color: #ccc;
+  transform: none; /* 変形効果も無効化 */
+  cursor: default; /* 無効感を出すなら */
+}
+
+/* 変更あり（緑＋hover効果あり） */
+.save-button.changed {
   background-color: #4caf50;
   color: white;
 }
 
-.save-button:hover {
-  background-color: #3e8e41;
+.save-button.changed:hover {
+  background-color: #4caf50;
   transform: translateY(-1px);
 }
-
 .cancel-button {
   background-color: #ccc;
   color: #333;

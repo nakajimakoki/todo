@@ -115,10 +115,13 @@ function App() {
 
   // 編集処理
   const handleUpdate = async (todo) => {
-    const { id, completed } = todo;
+    const { id, title, completed } = todo;
     const error = validateTodoInput(editingText);
     if (error) {
       toastError(error);
+      return;
+    }
+    if (editingText === todo.title) {
       return;
     }
 
@@ -206,7 +209,9 @@ function App() {
                 {editingId === todo.id ? (
                   <>
                     <button
-                      className="save-button icon-button"
+                      className={`save-button icon-button ${
+                        editingText === todo.title ? "unchanged" : "changed"
+                      }`}
                       onClick={() => handleUpdate(todo)}
                     >
                       保存
