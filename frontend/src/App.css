@@ -294,3 +294,14 @@ body {
   flex-direction: column; /* 縦並び */
   margin-top: 4px;
 }
+
+.todo-title-text.completed {
+  text-decoration: line-through;
+  color: #999;
+  font-style: italic;
+}
+
+.todo-item.completed {
+  background-color: #f5f5f5;
+  border-left: 4px solid #666; /* 完了タスクの目印 */
+}

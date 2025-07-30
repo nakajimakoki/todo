@@ -173,7 +173,10 @@ function App() {
       ) : (
         <ul className="todo-list">
           {todos.map((todo) => (
-            <li key={todo.id} className="todo-item">
+            <li
+              key={todo.id}
+              className={`todo-item ${todo.completed ? "completed" : ""}`}
+            >
               <div className="todo-left">
                 <input
                   type="checkbox"
@@ -195,10 +198,9 @@ function App() {
                   />
                 ) : (
                   <span
-                    className="todo-title-text"
-                    style={{
-                      textDecoration: todo.completed ? "line-through" : "none",
-                    }}
+                    className={`todo-title-text ${
+                      todo.completed ? "completed" : ""
+                    }`}
                   >
                     {todo.title}
                   </span>

@@ -13,11 +13,11 @@ public class Todo {
     private String title;
     private boolean completed;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Tokyo")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Tokyo")
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Tokyo")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Tokyo")
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
