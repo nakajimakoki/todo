@@ -13,6 +13,7 @@ function App() {
   const [status, setStatus] = useState(""); // ステータスの状態
   const [editingId, setEditingId] = useState(null); // 編集中のTodo ID
   const [editingText, setEditingText] = useState(""); // 編集用テキスト
+  const [editingStatus, setEditingStatus] = useState(""); // 編集用ステータス
 
   // 初回に一覧を取得
   useEffect(() => {
@@ -110,13 +111,13 @@ function App() {
 
   // 編集処理
   const handleUpdate = async (todo) => {
-    const { id, title, status } = todo;
+    const { id, title } = todo;
     const error = validateTodoInput(editingText);
     if (error) {
       toastError(error);
       return;
     }
-    if (editingText === title) {
+    if (editingText === title && editingStatus === todo.status) {
       return;
     }
 
@@ -126,7 +127,7 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title: editingText, status }),
+        body: JSON.stringify({ title: editingText, status: editingStatus }),
       });
 
       if (!response.ok) {
@@ -138,6 +139,7 @@ function App() {
       setTodos(todos.map((todo) => (todo.id === id ? updatedTodo : todo)));
       setEditingId(null);
       setEditingText("");
+      setEditingStatus("");
       toastSuccess("ToDoを更新しました");
       console.log(`ToDo ID ${id} を更新しました`);
     } catch (error) {
@@ -175,10 +177,10 @@ function App() {
               <div className="todo-left">
                 {editingId === todo.id ? (
                   <>
-                    {/* ステータス選択 */}
+                    {/* 編集モード：ステータス選択（編集用state） */}
                     <select
-                      value={todo.status}
-                      onChange={(e) => handleStatus(todo, e.target.value)}
+                      value={editingStatus}
+                      onChange={(e) => setEditingStatus(e.target.value)}
                       className="todo-status-select"
                     >
                       <option value="未着手">未着手</option>
@@ -215,7 +217,10 @@ function App() {
                   <>
                     <button
                       className={`save-button icon-button ${
-                        editingText === todo.title ? "unchanged" : "changed"
+                        editingText === todo.title &&
+                        editingStatus === todo.status
+                          ? "unchanged"
+                          : "changed"
                       }`}
                       onClick={() => handleUpdate(todo)}
                     >
@@ -223,7 +228,11 @@ function App() {
                     </button>
                     <button
                       className="cancel-button icon-button"
-                      onClick={() => setEditingId(null)}
+                      onClick={() => {
+                        setEditingId(null);
+                        setEditingText("");
+                        setEditingStatus("");
+                      }}
                     >
                       キャンセル
                     </button>
@@ -235,6 +244,7 @@ function App() {
                       onClick={() => {
                         setEditingId(todo.id);
                         setEditingText(todo.title);
+                        setEditingStatus(todo.status);
                       }}
                     >
                       <FiEdit2 />
