@@ -1,4 +1,73 @@
 /* =========================================
+   ステータスフィルターバー
+========================================= */
+.status-filter-bar {
+  display: flex;
+  gap: 0.7rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.status-filter-btn {
+  padding: 7px 22px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background: #e0e0e0;
+  color: #555;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  outline: none;
+}
+
+.status-filter-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.status-filter-btn.active {
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: scale(1.08);
+}
+
+/* ステータスごとの色分け */
+.status-filter-btn-すべて {
+  background: #bdbdbd;
+}
+.status-filter-btn-すべて.active {
+  background: #757575;
+}
+
+.status-filter-btn-未着手 {
+  background: #ffeaea;
+  color: #d32f2f;
+}
+.status-filter-btn-未着手.active {
+  background: #ffd6d6;
+  color: #b71c1c;
+}
+
+.status-filter-btn-進行中 {
+  background: #fff8e1;
+  color: #ffb300;
+}
+.status-filter-btn-進行中.active {
+  background: #ffe082;
+  color: #ff9800;
+}
+
+.status-filter-btn-完了 {
+  background: #f0f0f0;
+  color: #555;
+}
+.status-filter-btn-完了.active {
+  background: #bdbdbd;
+  color: #222;
+}
+/* =========================================
    全体の基本スタイル
 ========================================= */
 body {
@@ -318,16 +387,16 @@ body {
 }
 
 .status-未着手 {
-  background-color: #f0f0f0;
-  color: #555;
+  background-color: #ffeaea;
+  color: #d32f2f;
 }
 
 .status-進行中 {
-  background-color: #ffecb3;
-  color: #ff9800;
+  background-color: #fff8e1;
+  color: #ffb300;
 }
 
 .status-完了 {
-  background-color: #c8e6c9;
-  color: #388e3c;
+  background-color: #f0f0f0;
+  color: #555;
 }

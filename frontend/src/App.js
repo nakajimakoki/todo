@@ -14,6 +14,7 @@ function App() {
   const [editingId, setEditingId] = useState(null); // 編集中のTodo ID
   const [editingText, setEditingText] = useState(""); // 編集用テキスト
   const [editingStatus, setEditingStatus] = useState(""); // 編集用ステータス
+  const [filterStatus, setFilterStatus] = useState("すべて"); // ステータスフィルター
 
   // 初回に一覧を取得
   useEffect(() => {
@@ -151,6 +152,21 @@ function App() {
   return (
     <div className="todo-container">
       <h1 className="todo-title">ToDo一覧</h1>
+      {/* ステータスフィルター */}
+      <div className="status-filter-bar">
+        {["すべて", "未着手", "進行中", "完了"].map((status) => (
+          <button
+            key={status}
+            className={`status-filter-btn status-filter-btn-${status} ${
+              filterStatus === status ? "active" : ""
+            }`}
+            onClick={() => setFilterStatus(status)}
+            type="button"
+          >
+            {status}
+          </button>
+        ))}
+      </div>
       {/* 入力フォーム */}
       <div className="todo-input-group">
         <input
@@ -169,107 +185,112 @@ function App() {
         <p className="todo-empty">現在、登録されているToDoはありません</p>
       ) : (
         <ul className="todo-list">
-          {todos.map((todo) => (
-            <li
-              key={todo.id}
-              className={`todo-item ${todo.completed ? "completed" : ""}`}
-            >
-              <div className="todo-left">
-                {editingId === todo.id ? (
-                  <>
-                    {/* 編集モード：ステータス選択（編集用state） */}
-                    <select
-                      value={editingStatus}
-                      onChange={(e) => setEditingStatus(e.target.value)}
-                      className="todo-status-select"
-                    >
-                      <option value="未着手">未着手</option>
-                      <option value="進行中">進行中</option>
-                      <option value="完了">完了</option>
-                    </select>
+          {todos
+            .filter(
+              (todo) =>
+                filterStatus === "すべて" || todo.status === filterStatus
+            )
+            .map((todo) => (
+              <li
+                key={todo.id}
+                className={`todo-item ${todo.completed ? "completed" : ""}`}
+              >
+                <div className="todo-left">
+                  {editingId === todo.id ? (
+                    <>
+                      {/* 編集モード：ステータス選択（編集用state） */}
+                      <select
+                        value={editingStatus}
+                        onChange={(e) => setEditingStatus(e.target.value)}
+                        className="todo-status-select"
+                      >
+                        <option value="未着手">未着手</option>
+                        <option value="進行中">進行中</option>
+                        <option value="完了">完了</option>
+                      </select>
 
-                    {/* タイトル編集用 */}
-                    <input
-                      type="text"
-                      value={editingText}
-                      autoFocus
-                      onChange={(e) => setEditingText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleUpdate(todo);
-                        if (e.key === "Escape") setEditingId(null);
-                      }}
-                      className="todo-edit-input"
-                    />
-                  </>
-                ) : (
-                  <>
-                    {/* 通常表示：ステータスバッジ */}
-                    <span className={`todo-status status-${todo.status}`}>
-                      {todo.status}
-                    </span>
-                    <span className="todo-title-text">{todo.title}</span>
-                  </>
-                )}
-              </div>
+                      {/* タイトル編集用 */}
+                      <input
+                        type="text"
+                        value={editingText}
+                        autoFocus
+                        onChange={(e) => setEditingText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleUpdate(todo);
+                          if (e.key === "Escape") setEditingId(null);
+                        }}
+                        className="todo-edit-input"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      {/* 通常表示：ステータスバッジ */}
+                      <span className={`todo-status status-${todo.status}`}>
+                        {todo.status}
+                      </span>
+                      <span className="todo-title-text">{todo.title}</span>
+                    </>
+                  )}
+                </div>
 
-              <div className="todo-right">
-                {editingId === todo.id ? (
-                  <>
-                    <button
-                      className={`save-button icon-button ${
-                        editingText === todo.title &&
-                        editingStatus === todo.status
-                          ? "unchanged"
-                          : "changed"
-                      }`}
-                      onClick={() => handleUpdate(todo)}
-                    >
-                      保存
-                    </button>
-                    <button
-                      className="cancel-button icon-button"
-                      onClick={() => {
-                        setEditingId(null);
-                        setEditingText("");
-                        setEditingStatus("");
-                      }}
-                    >
-                      キャンセル
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="edit-button icon-button"
-                      onClick={() => {
-                        setEditingId(todo.id);
-                        setEditingText(todo.title);
-                        setEditingStatus(todo.status);
-                      }}
-                    >
-                      <FiEdit2 />
-                    </button>
-                    <button
-                      className="delete-button icon-button"
-                      onClick={() => handleDelete(todo.id)}
-                    >
-                      <FiTrash2 />
-                    </button>
-                    <div className="todo-dates">
-                      <div>
-                        作成：{" "}
-                        {new Date(todo.createdAt).toLocaleString("ja-JP")}
+                <div className="todo-right">
+                  {editingId === todo.id ? (
+                    <>
+                      <button
+                        className={`save-button icon-button ${
+                          editingText === todo.title &&
+                          editingStatus === todo.status
+                            ? "unchanged"
+                            : "changed"
+                        }`}
+                        onClick={() => handleUpdate(todo)}
+                      >
+                        保存
+                      </button>
+                      <button
+                        className="cancel-button icon-button"
+                        onClick={() => {
+                          setEditingId(null);
+                          setEditingText("");
+                          setEditingStatus("");
+                        }}
+                      >
+                        キャンセル
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="edit-button icon-button"
+                        onClick={() => {
+                          setEditingId(todo.id);
+                          setEditingText(todo.title);
+                          setEditingStatus(todo.status);
+                        }}
+                      >
+                        <FiEdit2 />
+                      </button>
+                      <button
+                        className="delete-button icon-button"
+                        onClick={() => handleDelete(todo.id)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                      <div className="todo-dates">
+                        <div>
+                          作成：{" "}
+                          {new Date(todo.createdAt).toLocaleString("ja-JP")}
+                        </div>
+                        <div>
+                          更新：{" "}
+                          {new Date(todo.updatedAt).toLocaleString("ja-JP")}
+                        </div>
                       </div>
-                      <div>
-                        更新：{" "}
-                        {new Date(todo.updatedAt).toLocaleString("ja-JP")}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </li>
-          ))}
+                    </>
+                  )}
+                </div>
+              </li>
+            ))}
         </ul>
       )}
       <ToastContainer
