@@ -8,9 +8,14 @@ import { ToastContainer } from "react-toastify";
 import { toastSuccess, toastError } from "./utils/toast";
 import { validateTodoInput } from "./utils/validation";
 import "react-toastify/dist/ReactToastify.css";
+import {
+  fetchTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+} from "./api/todoService";
 
 function App() {
-  // state
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -19,21 +24,17 @@ function App() {
   const [filterStatus, setFilterStatus] = useState("すべて");
   const [viewMode, setViewMode] = useState("list");
 
-  // fetch
   useEffect(() => {
-    const fetchTodos = async () => {
+    (async () => {
       try {
-        const res = await fetch("http://localhost:8080/todos");
-        if (!res.ok) throw new Error("取得に失敗しました");
-        setTodos(await res.json());
+        const data = await fetchTodos();
+        setTodos(data);
       } catch {
         toastError("ToDoの取得に失敗しました");
       }
-    };
-    fetchTodos();
+    })();
   }, []);
 
-  // handlers
   const handleAddTodo = async () => {
     const error = validateTodoInput(newTodo);
     if (error) {
@@ -41,13 +42,7 @@ function App() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:8080/todos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTodo, status: "未着手" }),
-      });
-      if (!res.ok) throw new Error();
-      const created = await res.json();
+      const created = await createTodo(newTodo);
       setTodos((prev) => [...prev, created]);
       setNewTodo("");
       toastSuccess("ToDoを追加しました");
@@ -63,17 +58,11 @@ function App() {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:8080/todos/${todo.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...todo,
-          title: editingText,
-          status: editingStatus,
-        }),
+      const updated = await updateTodo(todo.id, {
+        ...todo,
+        title: editingText,
+        status: editingStatus,
       });
-      if (!res.ok) throw new Error();
-      const updated = await res.json();
       setTodos((prev) => prev.map((t) => (t.id === todo.id ? updated : t)));
       setEditingId(null);
       toastSuccess("ToDoを更新しました");
@@ -84,10 +73,7 @@ function App() {
 
   const handleDelete = async (todoId) => {
     try {
-      const res = await fetch(`http://localhost:8080/todos/${todoId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error();
+      await deleteTodo(todoId);
       setTodos((prev) => prev.filter((t) => t.id !== todoId));
       toastSuccess("ToDoを削除しました");
     } catch {
@@ -106,13 +92,10 @@ function App() {
             const todo = todos.find((t) => t.id === todoId);
             if (!todo || todo.status === newStatus) return;
             try {
-              const res = await fetch(`http://localhost:8080/todos/${todoId}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...todo, status: newStatus }),
+              const updated = await updateTodo(todoId, {
+                ...todo,
+                status: newStatus,
               });
-              if (!res.ok) throw new Error();
-              const updated = await res.json();
               setTodos((prev) =>
                 prev.map((t) => (t.id === todoId ? updated : t))
               );
@@ -126,7 +109,6 @@ function App() {
         <div className="todo-container">
           <h1 className="todo-title">ToDo一覧</h1>
 
-          {/* フィルター */}
           <div className="status-filter-bar">
             {["すべて", "未着手", "進行中", "完了"].map((status) => (
               <button
