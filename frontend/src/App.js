@@ -1,14 +1,16 @@
-// frontend/src/App.js
 import React, { useEffect, useState } from "react";
 import JiraBoard from "./JiraBoard";
+import ViewSwitch from "./components/ViewSwitch";
+import TodoInput from "./components/TodoInput";
+import TodoList from "./components/TodoList";
 import "./App.css";
 import { ToastContainer } from "react-toastify";
 import { toastSuccess, toastError } from "./utils/toast";
 import { validateTodoInput } from "./utils/validation";
 import "react-toastify/dist/ReactToastify.css";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 function App() {
+  // state
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -17,13 +19,13 @@ function App() {
   const [filterStatus, setFilterStatus] = useState("すべて");
   const [viewMode, setViewMode] = useState("list");
 
+  // fetch
   useEffect(() => {
     const fetchTodos = async () => {
       try {
         const res = await fetch("http://localhost:8080/todos");
         if (!res.ok) throw new Error("取得に失敗しました");
-        const data = await res.json();
-        setTodos(data);
+        setTodos(await res.json());
       } catch {
         toastError("ToDoの取得に失敗しました");
       }
@@ -31,9 +33,10 @@ function App() {
     fetchTodos();
   }, []);
 
+  // handlers
   const handleAddTodo = async () => {
     const error = validateTodoInput(newTodo);
-    if (error !== null) {
+    if (error) {
       toastError(error);
       return;
     }
@@ -43,7 +46,7 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: newTodo, status: "未着手" }),
       });
-      if (!res.ok) throw new Error("追加に失敗しました");
+      if (!res.ok) throw new Error();
       const created = await res.json();
       setTodos((prev) => [...prev, created]);
       setNewTodo("");
@@ -55,7 +58,7 @@ function App() {
 
   const handleUpdate = async (todo) => {
     const error = validateTodoInput(editingText);
-    if (error !== null) {
+    if (error) {
       toastError(error);
       return;
     }
@@ -69,7 +72,7 @@ function App() {
           status: editingStatus,
         }),
       });
-      if (!res.ok) throw new Error("更新に失敗しました");
+      if (!res.ok) throw new Error();
       const updated = await res.json();
       setTodos((prev) => prev.map((t) => (t.id === todo.id ? updated : t)));
       setEditingId(null);
@@ -84,7 +87,7 @@ function App() {
       const res = await fetch(`http://localhost:8080/todos/${todoId}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("削除に失敗しました");
+      if (!res.ok) throw new Error();
       setTodos((prev) => prev.filter((t) => t.id !== todoId));
       toastSuccess("ToDoを削除しました");
     } catch {
@@ -94,24 +97,9 @@ function App() {
 
   return (
     <div className="app-container">
-      {/*共通の切り替えボタン */}
-      <div className="view-switch-bar">
-        <button
-          className={`view-switch-btn${viewMode === "list" ? " active" : ""}`}
-          onClick={() => setViewMode("list")}
-        >
-          一覧表示
-        </button>
-        <button
-          className={`view-switch-btn${viewMode === "board" ? " active" : ""}`}
-          onClick={() => setViewMode("board")}
-        >
-          ボード表示
-        </button>
-      </div>
+      <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
 
       {viewMode === "board" ? (
-        // ボード画面
         <JiraBoard
           todos={todos}
           onStatusChange={async (todoId, newStatus) => {
@@ -123,7 +111,7 @@ function App() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ...todo, status: newStatus }),
               });
-              if (!res.ok) throw new Error("更新に失敗しました");
+              if (!res.ok) throw new Error();
               const updated = await res.json();
               setTodos((prev) =>
                 prev.map((t) => (t.id === todoId ? updated : t))
@@ -135,11 +123,10 @@ function App() {
           }}
         />
       ) : (
-        // 一覧画面
         <div className="todo-container">
           <h1 className="todo-title">ToDo一覧</h1>
 
-          {/* ステータスフィルター */}
+          {/* フィルター */}
           <div className="status-filter-bar">
             {["すべて", "未着手", "進行中", "完了"].map((status) => (
               <button
@@ -155,150 +142,31 @@ function App() {
             ))}
           </div>
 
-          {/* 入力フォーム */}
-          <div className="todo-input-group">
-            <input
-              type="text"
-              placeholder="新しいToDoを入力"
-              value={newTodo}
-              onChange={(e) => setNewTodo(e.target.value)}
-              className="todo-input"
-            />
-            <button onClick={handleAddTodo} className="todo-add-button">
-              ＋
-            </button>
-          </div>
+          <TodoInput
+            newTodo={newTodo}
+            setNewTodo={setNewTodo}
+            handleAddTodo={handleAddTodo}
+          />
 
-          {/* ToDoリスト */}
-          {todos.length === 0 ? (
-            <p className="todo-empty">現在、登録されているToDoはありません</p>
-          ) : (
-            <ul className="todo-list">
-              {todos
-                .filter(
-                  (todo) =>
-                    filterStatus === "すべて" || todo.status === filterStatus
-                )
-                .map((todo) => (
-                  <li
-                    key={todo.id}
-                    className={`todo-item ${todo.completed ? "completed" : ""}`}
-                  >
-                    <div className="todo-item-inner">
-                      <div className="todo-left">
-                        {editingId === todo.id ? (
-                          <>
-                            <select
-                              value={editingStatus}
-                              onChange={(e) => setEditingStatus(e.target.value)}
-                              className="todo-status-select"
-                            >
-                              <option value="未着手">未着手</option>
-                              <option value="進行中">進行中</option>
-                              <option value="完了">完了</option>
-                            </select>
-                            <input
-                              type="text"
-                              value={editingText}
-                              autoFocus
-                              onChange={(e) => setEditingText(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") handleUpdate(todo);
-                                if (e.key === "Escape") setEditingId(null);
-                              }}
-                              className="todo-edit-input"
-                            />
-                          </>
-                        ) : (
-                          <>
-                            <span
-                              className={`todo-status status-${todo.status}`}
-                            >
-                              {todo.status}
-                            </span>
-                            <span className="todo-title-text">
-                              {todo.title}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                      <div className="todo-right">
-                        {editingId === todo.id ? (
-                          <>
-                            <button
-                              className={`save-button icon-button ${
-                                editingText === todo.title &&
-                                editingStatus === todo.status
-                                  ? "unchanged"
-                                  : "changed"
-                              }`}
-                              onClick={() => handleUpdate(todo)}
-                            >
-                              保存
-                            </button>
-                            <button
-                              className="cancel-button icon-button"
-                              onClick={() => {
-                                setEditingId(null);
-                                setEditingText("");
-                                setEditingStatus("");
-                              }}
-                            >
-                              キャンセル
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              className="edit-button icon-button"
-                              onClick={() => {
-                                setEditingId(todo.id);
-                                setEditingText(todo.title);
-                                setEditingStatus(todo.status);
-                              }}
-                            >
-                              <FiEdit2 />
-                            </button>
-                            <button
-                              className="delete-button icon-button"
-                              onClick={() => handleDelete(todo.id)}
-                            >
-                              <FiTrash2 />
-                            </button>
-                            <div className="todo-dates">
-                              <div>
-                                作成：
-                                {new Date(todo.createdAt).toLocaleString(
-                                  "ja-JP"
-                                )}
-                              </div>
-                              <div>
-                                更新：
-                                {new Date(todo.updatedAt).toLocaleString(
-                                  "ja-JP"
-                                )}
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-            </ul>
-          )}
+          <TodoList
+            todos={todos}
+            filterStatus={filterStatus}
+            editingId={editingId}
+            editingText={editingText}
+            editingStatus={editingStatus}
+            setEditingId={setEditingId}
+            setEditingText={setEditingText}
+            setEditingStatus={setEditingStatus}
+            handleUpdate={handleUpdate}
+            handleDelete={handleDelete}
+          />
         </div>
       )}
 
       <ToastContainer
         position="top-right"
         autoClose={2000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
+        hideProgressBar
         theme="light"
       />
     </div>
