@@ -421,3 +421,39 @@ body {
   background-color: #f0f0f0;
   color: #555;
 }
+
+.todo-header {
+  display: flex;
+  justify-content: space-between; /* 左にタイトル、右に切替 */
+  align-items: center; /* 縦方向中央寄せ */
+  margin-bottom: 20px;
+}
+
+.view-switch-bar {
+  display: flex;
+  gap: 8px; /* ボタンの間隔 */
+}
+
+.view-switch-btn {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.view-switch-btn.active {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.board-header {
+  text-align: center; /* 中央寄せ */
+  margin-bottom: 20px; /* ボードとの間に余白 */
+}
+
+.board-header .view-switch-bar {
+  display: inline-flex; /* 中央に横並び */
+  gap: 8px;
+}

@@ -83,31 +83,37 @@ function App() {
 
   return (
     <div className="app-container">
-      <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
-
       {viewMode === "board" ? (
-        <JiraBoard
-          todos={todos}
-          onStatusChange={async (todoId, newStatus) => {
-            const todo = todos.find((t) => t.id === todoId);
-            if (!todo || todo.status === newStatus) return;
-            try {
-              const updated = await updateTodo(todoId, {
-                ...todo,
-                status: newStatus,
-              });
-              setTodos((prev) =>
-                prev.map((t) => (t.id === todoId ? updated : t))
-              );
-              toastSuccess("ステータスを更新しました");
-            } catch {
-              toastError("ステータスの更新に失敗しました");
-            }
-          }}
-        />
+        <>
+          <div className="board-header">
+            <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
+          </div>
+          <JiraBoard
+            todos={todos}
+            onStatusChange={async (todoId, newStatus) => {
+              const todo = todos.find((t) => t.id === todoId);
+              if (!todo || todo.status === newStatus) return;
+              try {
+                const updated = await updateTodo(todoId, {
+                  ...todo,
+                  status: newStatus,
+                });
+                setTodos((prev) =>
+                  prev.map((t) => (t.id === todoId ? updated : t))
+                );
+                toastSuccess("ステータスを更新しました");
+              } catch {
+                toastError("ステータスの更新に失敗しました");
+              }
+            }}
+          />
+        </>
       ) : (
         <div className="todo-container">
-          <h1 className="todo-title">ToDo一覧</h1>
+          <div className="todo-header">
+            <h1 className="todo-title">ToDo一覧</h1>
+            <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
+          </div>
 
           <div className="status-filter-bar">
             {["すべて", "未着手", "進行中", "完了"].map((status) => (
