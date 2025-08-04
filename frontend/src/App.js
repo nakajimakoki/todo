@@ -32,8 +32,9 @@ function App() {
   }, []);
 
   const handleAddTodo = async () => {
-    if (!validateTodoInput(newTodo)) {
-      toastError("入力が不正です");
+    const error = validateTodoInput(newTodo);
+    if (error !== null) {
+      toastError(error);
       return;
     }
     try {
@@ -53,6 +54,11 @@ function App() {
   };
 
   const handleUpdate = async (todo) => {
+    const error = validateTodoInput(editingText);
+    if (error !== null) {
+      toastError(error);
+      return;
+    }
     try {
       const res = await fetch(`http://localhost:8080/todos/${todo.id}`, {
         method: "PUT",
@@ -88,7 +94,7 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* ✅ 共通の切り替えボタン */}
+      {/*共通の切り替えボタン */}
       <div className="view-switch-bar">
         <button
           className={`view-switch-btn${viewMode === "list" ? " active" : ""}`}
@@ -105,7 +111,7 @@ function App() {
       </div>
 
       {viewMode === "board" ? (
-        // ✅ ボード画面
+        // ボード画面
         <JiraBoard
           todos={todos}
           onStatusChange={async (todoId, newStatus) => {
@@ -129,7 +135,7 @@ function App() {
           }}
         />
       ) : (
-        // ✅ 一覧画面
+        // 一覧画面
         <div className="todo-container">
           <h1 className="todo-title">ToDo一覧</h1>
 

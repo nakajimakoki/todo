@@ -3,9 +3,9 @@ import "./JiraBoard.css";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const statusList = [
-  { key: "未着手", label: "TO DO", color: "#2563eb" }, // 青
-  { key: "進行中", label: "IN PROGRESS", color: "#ef4444" }, // 赤
-  { key: "完了", label: "DONE", color: "#22c55e" }, // 緑
+  { key: "未着手", label: "未着手", color: "#d32f2f" },
+  { key: "進行中", label: "進行中", color: "#ffb300" },
+  { key: "完了", label: "完了", color: "#555" },
 ];
 
 function JiraBoard({ todos, onStatusChange }) {

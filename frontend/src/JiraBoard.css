@@ -115,13 +115,13 @@
 
 /* ステータスごとのカラーライン */
 .jira-board-card-未着手 .jira-board-card-line {
-  background: #2563eb;
+  background: #d32f2f;
 }
 .jira-board-card-進行中 .jira-board-card-line {
-  background: #ef4444;
+  background: #ffb300;
 }
 .jira-board-card-完了 .jira-board-card-line {
-  background: #22c55e;
+  background: #555;
 }
 
 /* レスポンシブ: 横幅が狭い場合は縦並び */
