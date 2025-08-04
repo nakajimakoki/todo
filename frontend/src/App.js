@@ -57,6 +57,9 @@ function App() {
       toastError(error);
       return;
     }
+    if (editingText === todo.title && editingStatus === todo.status) {
+      return;
+    }
     try {
       const updated = await updateTodo(todo.id, {
         ...todo,
