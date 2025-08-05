@@ -26,15 +26,19 @@ export default function TodoItem({
   handleUpdate,
   handleDelete,
 }: TodoItemProps) {
+  const isEditing = editingId === todo.id;
+
   return (
-    <li key={todo.id} className={`todo-item`}>
-      <div className="todo-item-inner">
+    <li key={todo.id} className="todo-item">
+      <div className="todo-header-row">
         <div className="todo-left">
           {editingId === todo.id ? (
             <>
               <select
                 value={editingStatus}
-                onChange={(e) => setEditingStatus(e.target.value as Todo["status"])}
+                onChange={(e) =>
+                  setEditingStatus(e.target.value as Todo["status"])
+                }
                 className="todo-status-select"
               >
                 <option value="未着手">未着手</option>
@@ -62,58 +66,59 @@ export default function TodoItem({
             </>
           )}
         </div>
-        <div className="todo-right">
-          {editingId === todo.id ? (
-            <>
-              <button
-                className={`save-button icon-button ${
-                  editingText === todo.title && editingStatus === todo.status
-                    ? "unchanged"
-                    : "changed"
-                }`}
-                onClick={() => handleUpdate(todo)}
-              >
-                保存
-              </button>
-              <button
-                className="cancel-button icon-button"
-                onClick={() => {
-                  setEditingId(null);
-                  setEditingText("");
-                }}
-              >
-                キャンセル
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                className="edit-button icon-button"
-                onClick={() => {
-                  setEditingId(todo.id);
-                  setEditingText(todo.title);
-                  setEditingStatus(todo.status);
-                }}
-              >
-                <FiEdit2 />
-              </button>
-              <button
-                className="delete-button icon-button"
-                onClick={() => handleDelete(todo.id)}
-              >
-                <FiTrash2 />
-              </button>
-              <div className="todo-dates">
-                <div>
-                  作成：{new Date(todo.createdAt).toLocaleString("ja-JP")}
-                </div>
-                <div>
-                  更新：{new Date(todo.updatedAt).toLocaleString("ja-JP")}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+        {!editingId && (
+          <div className="todo-dates">
+            <div>作成：{new Date(todo.createdAt).toLocaleString("ja-JP")}</div>
+            <div>更新：{new Date(todo.updatedAt).toLocaleString("ja-JP")}</div>
+          </div>
+        )}
+      </div>
+
+      {/* フッター */}
+      <div className="todo-footer">
+        {editingId === todo.id ? (
+          <>
+            <button
+              className={`save-button icon-button ${
+                editingText === todo.title && editingStatus === todo.status
+                  ? "unchanged"
+                  : "changed"
+              }`}
+              onClick={() => handleUpdate(todo)}
+            >
+              保存
+            </button>
+            <button
+              className="cancel-button icon-button"
+              onClick={() => {
+                setEditingId(null);
+                setEditingText("");
+                setEditingStatus(todo.status);
+              }}
+            >
+              キャンセル
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="edit-button icon-button"
+              onClick={() => {
+                setEditingId(todo.id);
+                setEditingText(todo.title);
+                setEditingStatus(todo.status);
+              }}
+            >
+              <FiEdit2 />
+            </button>
+            <button
+              className="delete-button icon-button"
+              onClick={() => handleDelete(todo.id)}
+            >
+              <FiTrash2 />
+            </button>
+          </>
+        )}
       </div>
     </li>
   );

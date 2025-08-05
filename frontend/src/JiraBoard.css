@@ -32,17 +32,46 @@
   min-height: 500px;
   margin-bottom: 32px;
   padding-bottom: 32px;
+  overflow: hidden;
 }
 
 .jira-board-column-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 22px 24px 12px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 20px;
   font-size: 1.1rem;
   font-weight: bold;
   letter-spacing: 0.04em;
+  border-radius: 14px 14px 0 0;
+}
+
+/* パステル調ヘッダー */
+.jira-board-column-未着手 .jira-board-column-header {
+  background: #ffebee;
+  color: #c62828;
+}
+.jira-board-column-進行中 .jira-board-column-header {
+  background: #fff8e1;
+  color: #ef6c00;
+}
+.jira-board-column-完了 .jira-board-column-header {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* カウントも柔らかい色 */
+.jira-board-column-未着手 .jira-board-column-count {
+  background: #ffcdd2;
+  color: #b71c1c;
+}
+.jira-board-column-進行中 .jira-board-column-count {
+  background: #ffe082;
+  color: #ef6c00;
+}
+.jira-board-column-完了 .jira-board-column-count {
+  background: #a5d6a7;
+  color: #2e7d32;
 }
 
 .jira-board-column-title {
@@ -57,13 +86,14 @@
   justify-content: center;
   width: 2em;
   height: 2em;
-  background: #e5e7eb;
-  color: #555;
   border-radius: 50%;
   font-size: 1rem;
   font-weight: 500;
 }
 
+/* =========================================
+   カード
+========================================= */
 .jira-board-cards {
   flex: 1;
   padding: 18px;
@@ -71,35 +101,25 @@
   min-height: 100px;
 }
 
-/* =========================================
-   カード
-========================================= */
 .jira-board-card {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 18px;
-  padding: 18px 18px 14px;
+  padding: 16px 16px 14px;
   font-size: 1rem;
   color: #222;
   cursor: grab;
   min-height: 80px;
   transition: box-shadow 0.2s, background 0.2s;
+  border-left: 8px solid transparent; /* 縦ライン用 */
 }
 
 .jira-board-card:active {
   cursor: grabbing;
-}
-
-.jira-board-card-line {
-  flex-shrink: 0;
-  width: 6px;
-  height: 100%;
-  margin-right: 14px;
-  border-radius: 6px;
 }
 
 .jira-board-card-content {
@@ -136,18 +156,16 @@
 }
 
 /* =========================================
-   ステータスごとのカラーライン
+   ステータスごとの縦ライン
 ========================================= */
-.jira-board-card-未着手 .jira-board-card-line {
-  background: #d32f2f;
+.jira-board-card-未着手 {
+  border-left-color: #ef9a9a;
 }
-
-.jira-board-card-進行中 .jira-board-card-line {
-  background: #ffb300;
+.jira-board-card-進行中 {
+  border-left-color: #ffd54f;
 }
-
-.jira-board-card-完了 .jira-board-card-line {
-  background: #555;
+.jira-board-card-完了 {
+  border-left-color: #81c784;
 }
 
 /* =========================================

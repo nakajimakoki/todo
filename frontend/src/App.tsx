@@ -87,80 +87,73 @@ function App() {
     }
   };
 
+  const handleStatusChange = async (
+    todoId: number,
+    newStatus: Todo["status"]
+  ) => {
+    const todo = todos.find((t) => t.id === todoId);
+    if (!todo || todo.status === newStatus) return;
+    try {
+      const updated = await updateTodo(todoId, {
+        ...todo,
+        status: newStatus,
+      });
+      setTodos((prev) => prev.map((t) => (t.id === todoId ? updated : t)));
+      toastSuccess("ステータスを更新しました");
+    } catch {
+      toastError("ステータスの更新に失敗しました");
+    }
+  };
   return (
     <div className="app-container">
-      {viewMode === "board" ? (
-        <>
-          <div className="board-header">
-            <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
-          </div>
-          <JiraBoard
-            todos={todos}
-            onStatusChange={async (
-              todoId: number,
-              newStatus: Todo["status"]
-            ) => {
-              const todo = todos.find((t) => t.id === todoId);
-              if (!todo || todo.status === newStatus) return;
-              try {
-                const updated = await updateTodo(todoId, {
-                  ...todo,
-                  status: newStatus,
-                });
-                setTodos((prev) =>
-                  prev.map((t) => (t.id === todoId ? updated : t))
-                );
-                toastSuccess("ステータスを更新しました");
-              } catch {
-                toastError("ステータスの更新に失敗しました");
-              }
-            }}
-          />
-        </>
-      ) : (
-        <div className="todo-container">
-          <div className="todo-header">
-            <h1 className="todo-title">ToDo一覧</h1>
-            <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
-          </div>
+      {/* 共通ヘッダー */}
+      <header className="app-header">
+        <h1 className="app-title">Todo管理ツール</h1>
+        <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
+      </header>
 
-          <div className="status-filter-bar">
-            {["すべて", "未着手", "進行中", "完了"].map((status) => (
-              <button
-                key={status}
-                className={`status-filter-btn status-filter-btn-${status} ${
-                  filterStatus === status ? "active" : ""
-                }`}
-                onClick={() =>
-                  setFilterStatus(status as "すべて" | Todo["status"])
-                }
-                type="button"
-              >
-                {status}
-              </button>
-            ))}
-          </div>
+      <main className="app-main">
+        {viewMode === "board" ? (
+          <JiraBoard todos={todos} onStatusChange={handleStatusChange} />
+        ) : (
+          <>
+            <div className="status-filter-bar">
+              {["すべて", "未着手", "進行中", "完了"].map((status) => (
+                <button
+                  key={status}
+                  className={`status-filter-btn ${
+                    filterStatus === status ? "active" : ""
+                  }`}
+                  onClick={() =>
+                    setFilterStatus(status as "すべて" | Todo["status"])
+                  }
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
 
-          <TodoInput
-            newTodo={newTodo}
-            setNewTodo={setNewTodo}
-            handleAddTodo={handleAddTodo}
-          />
+            <TodoInput
+              newTodo={newTodo}
+              setNewTodo={setNewTodo}
+              handleAddTodo={handleAddTodo}
+            />
 
-          <TodoList
-            todos={todos}
-            filterStatus={filterStatus}
-            editingId={editingId}
-            editingText={editingText}
-            editingStatus={editingStatus}
-            setEditingId={setEditingId}
-            setEditingText={setEditingText}
-            setEditingStatus={setEditingStatus}
-            handleUpdate={handleUpdate}
-            handleDelete={handleDelete}
-          />
-        </div>
-      )}
+            <TodoList
+              todos={todos}
+              filterStatus={filterStatus}
+              editingId={editingId}
+              editingText={editingText}
+              editingStatus={editingStatus}
+              setEditingId={setEditingId}
+              setEditingText={setEditingText}
+              setEditingStatus={setEditingStatus}
+              handleUpdate={handleUpdate}
+              handleDelete={handleDelete}
+            />
+          </>
+        )}
+      </main>
 
       <ToastContainer
         position="top-right"
@@ -171,5 +164,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

@@ -1,16 +1,33 @@
 import React, { useMemo } from "react";
 import "./JiraBoard.css";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
+import { Todo } from "./types/todo";
 
-// ステータス定義
-const STATUS_LIST = [
-  { key: "未着手", label: "未着手", color: "#d32f2f" },
-  { key: "進行中", label: "進行中", color: "#ffb300" },
+type Status = {
+  key: Todo["status"];
+  label: string;
+  color: string;
+};
+
+const STATUS_LIST: Status[] = [
+  { key: "未着手", label: "未着手", color: "#555" },
+  { key: "進行中", label: "進行中", color: "#555" },
   { key: "完了", label: "完了", color: "#555" },
 ];
 
 // ToDoカード
-function JiraCard({ todo, status, provided }) {
+type JiraCardProps = {
+  todo: Todo;
+  status: Status;
+  provided: any; // 型が複雑なので any でOK。厳密にするなら DraggableProvided
+};
+
+function JiraCard({ todo, status, provided }: JiraCardProps) {
   return (
     <div
       className={`jira-board-card jira-board-card-${status.key}`}
@@ -42,7 +59,12 @@ function JiraCard({ todo, status, provided }) {
 }
 
 // カラム
-function JiraColumn({ status, todos }) {
+type JiraColumnProps = {
+  status: Status;
+  todos: Todo[];
+};
+
+function JiraColumn({ status, todos }: JiraColumnProps) {
   return (
     <Droppable droppableId={status.key}>
       {(provided) => (
@@ -80,17 +102,33 @@ function JiraColumn({ status, todos }) {
   );
 }
 
-function JiraBoard({ todos, onStatusChange }) {
-  // ステータスごとに分類（useMemoで不要な再計算防止）
+// JiraBoard 全体
+type JiraBoardProps = {
+  todos: Todo[];
+  onStatusChange: (
+    todoId: number,
+    newStatus: Todo["status"]
+  ) => void | Promise<void>;
+};
+
+function JiraBoard({ todos, onStatusChange }: JiraBoardProps) {
+  // ステータスごとに分類
   const columns = useMemo(() => {
-    return STATUS_LIST.reduce((acc, s) => {
-      acc[s.key] = todos.filter((t) => t.status === s.key);
-      return acc;
-    }, {});
+    return STATUS_LIST.reduce<Record<Todo["status"], Todo[]>>(
+      (acc, s) => {
+        acc[s.key] = todos.filter((t) => t.status === s.key);
+        return acc;
+      },
+      {
+        未着手: [],
+        進行中: [],
+        完了: [],
+      }
+    );
   }, [todos]);
 
   // ドラッグ終了時の処理
-  const onDragEnd = ({ source, destination, draggableId }) => {
+  const onDragEnd = ({ source, destination, draggableId }: DropResult) => {
     if (!destination) return;
     if (
       source.droppableId === destination.droppableId &&
@@ -99,7 +137,7 @@ function JiraBoard({ todos, onStatusChange }) {
       return;
     }
     const todoId = Number(draggableId);
-    const newStatus = destination.droppableId;
+    const newStatus = destination.droppableId as Todo["status"];
     onStatusChange(todoId, newStatus);
   };
 
