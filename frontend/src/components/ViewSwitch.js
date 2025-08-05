@@ -1,7 +1,14 @@
-// components/ViewSwitch.js
+// components/ViewSwitch.tsx
 import React from "react";
 
-export default function ViewSwitch({ viewMode, setViewMode }) {
+type ViewMode = "list" | "board";
+
+type ViewSwitchProps = {
+  viewMode: ViewMode,
+  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>,
+};
+
+export default function ViewSwitch({ viewMode, setViewMode }: ViewSwitchProps) {
   return (
     <div className="view-switch-bar">
       <button

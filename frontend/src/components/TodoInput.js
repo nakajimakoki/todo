@@ -1,7 +1,17 @@
-// components/TodoInput.js
+// components/TodoInput.tsx
 import React from "react";
 
-export default function TodoInput({ newTodo, setNewTodo, handleAddTodo }) {
+type TodoInputProps = {
+  newTodo: string;
+  setNewTodo: React.Dispatch<React.SetStateAction<string>>;
+  handleAddTodo: () => void;
+};
+
+export default function TodoInput({
+  newTodo,
+  setNewTodo,
+  handleAddTodo,
+}: TodoInputProps) {
   return (
     <div className="todo-input-group">
       <input
