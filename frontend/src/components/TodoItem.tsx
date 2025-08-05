@@ -1,43 +1,38 @@
-// components/TodoItem.tsx
 import React from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Todo } from "../types/todo";
+import { Editing } from "../types/editing";
 
 type TodoItemProps = {
   todo: Todo;
-  editingId: number | null;
-  editingText: string;
-  editingStatus: Todo["status"];
-  setEditingId: React.Dispatch<React.SetStateAction<number | null>>;
-  setEditingText: React.Dispatch<React.SetStateAction<string>>;
-  setEditingStatus: React.Dispatch<React.SetStateAction<Todo["status"]>>;
+  editing: Editing;
+  setEditing: React.Dispatch<React.SetStateAction<Editing>>;
   handleUpdate: (todo: Todo) => void | Promise<void>;
   handleDelete: (id: number) => void | Promise<void>;
 };
 
 export default function TodoItem({
   todo,
-  editingId,
-  editingText,
-  editingStatus,
-  setEditingId,
-  setEditingText,
-  setEditingStatus,
+  editing,
+  setEditing,
   handleUpdate,
   handleDelete,
 }: TodoItemProps) {
-  const isEditing = editingId === todo.id;
+  const isEditing = editing.mode === "editing" && editing.id === todo.id;
 
   return (
     <li key={todo.id} className="todo-item">
       <div className="todo-header-row">
         <div className="todo-left">
-          {editingId === todo.id ? (
+          {isEditing ? (
             <>
               <select
-                value={editingStatus}
+                value={editing.status}
                 onChange={(e) =>
-                  setEditingStatus(e.target.value as Todo["status"])
+                  setEditing({
+                    ...editing,
+                    status: e.target.value as Todo["status"],
+                  })
                 }
                 className="todo-status-select"
               >
@@ -47,12 +42,17 @@ export default function TodoItem({
               </select>
               <input
                 type="text"
-                value={editingText}
+                value={editing.text}
                 autoFocus
-                onChange={(e) => setEditingText(e.target.value)}
+                onChange={(e) =>
+                  setEditing({
+                    ...editing,
+                    text: e.target.value,
+                  })
+                }
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleUpdate(todo);
-                  if (e.key === "Escape") setEditingId(null);
+                  if (e.key === "Escape") setEditing({ mode: "none" });
                 }}
                 className="todo-edit-input"
               />
@@ -66,7 +66,7 @@ export default function TodoItem({
             </>
           )}
         </div>
-        {!editingId && (
+        {!isEditing && (
           <div className="todo-dates">
             <div>作成：{new Date(todo.createdAt).toLocaleString("ja-JP")}</div>
             <div>更新：{new Date(todo.updatedAt).toLocaleString("ja-JP")}</div>
@@ -76,11 +76,11 @@ export default function TodoItem({
 
       {/* フッター */}
       <div className="todo-footer">
-        {editingId === todo.id ? (
+        {isEditing ? (
           <>
             <button
               className={`save-button icon-button ${
-                editingText === todo.title && editingStatus === todo.status
+                editing.text === todo.title && editing.status === todo.status
                   ? "unchanged"
                   : "changed"
               }`}
@@ -90,11 +90,7 @@ export default function TodoItem({
             </button>
             <button
               className="cancel-button icon-button"
-              onClick={() => {
-                setEditingId(null);
-                setEditingText("");
-                setEditingStatus(todo.status);
-              }}
+              onClick={() => setEditing({ mode: "none" })}
             >
               キャンセル
             </button>
@@ -103,11 +99,14 @@ export default function TodoItem({
           <>
             <button
               className="edit-button icon-button"
-              onClick={() => {
-                setEditingId(todo.id);
-                setEditingText(todo.title);
-                setEditingStatus(todo.status);
-              }}
+              onClick={() =>
+                setEditing({
+                  mode: "editing",
+                  id: todo.id,
+                  text: todo.title,
+                  status: todo.status,
+                })
+              }
             >
               <FiEdit2 />
             </button>

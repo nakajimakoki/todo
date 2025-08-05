@@ -95,17 +95,15 @@ type JiraBoardProps = {
 function JiraBoard({ todos, onStatusChange }: JiraBoardProps) {
   // ステータスごとに分類
   const columns = useMemo(() => {
-    return STATUS_LIST.reduce<Record<Todo["status"], Todo[]>>(
-      (acc, s) => {
-        acc[s.key] = todos.filter((t) => t.status === s.key);
-        return acc;
-      },
-      {
-        未着手: [],
-        進行中: [],
-        完了: [],
-      }
-    );
+    const result: Record<Todo["status"], Todo[]> = {
+      未着手: [],
+      進行中: [],
+      完了: [],
+    };
+    todos.forEach((todo) => {
+      result[todo.status].push(todo);
+    });
+    return result;
   }, [todos]);
 
   // ドラッグ終了時の処理

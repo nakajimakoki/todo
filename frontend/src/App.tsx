@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Todo } from "./types/todo";
+import { ViewMode } from "./types/viewMode";
+import { FilterStatus } from "./types/filterStatus";
+import { Editing } from "./types/editing";
 import JiraBoard from "./JiraBoard";
 import ViewSwitch from "./components/ViewSwitch";
 import TodoInput from "./components/TodoInput";
@@ -19,14 +22,13 @@ import {
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState<string>("");
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingText, setEditingText] = useState<string>("");
-  const [editingStatus, setEditingStatus] = useState<Todo["status"]>("未着手");
-  const [filterStatus, setFilterStatus] = useState<"すべて" | Todo["status"]>(
-    "すべて"
-  );
-  const [viewMode, setViewMode] = useState<"list" | "board">("list");
+  const [editing, setEditing] = useState<Editing>({ mode: "none" });
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>({
+    kind: "all",
+  });
+  const [viewMode, setViewMode] = useState<ViewMode>({ type: "list" });
 
+  // 初期データの取得
   useEffect(() => {
     (async () => {
       try {
@@ -38,6 +40,7 @@ function App() {
     })();
   }, []);
 
+  // 新規ToDo追加処理
   const handleAddTodo = async () => {
     const error = validateTodoInput(newTodo);
     if (error) {
@@ -54,29 +57,32 @@ function App() {
     }
   };
 
+  // 更新処理
   const handleUpdate = async (todo: Todo) => {
-    const error = validateTodoInput(editingText);
+    if (editing.mode !== "editing") return;
+    const error = validateTodoInput(editing.text);
     if (error) {
       toastError(error);
       return;
     }
-    if (editingText === todo.title && editingStatus === todo.status) {
+    if (editing.text === todo.title && editing.status === todo.status) {
       return;
     }
     try {
       const updated = await updateTodo(todo.id, {
         ...todo,
-        title: editingText,
-        status: editingStatus,
+        title: editing.text,
+        status: editing.status,
       });
       setTodos((prev) => prev.map((t) => (t.id === todo.id ? updated : t)));
-      setEditingId(null);
+      setEditing({ mode: "none" });
       toastSuccess("ToDoを更新しました");
     } catch {
       toastError("ToDoの更新に失敗しました");
     }
   };
 
+  // 削除処理
   const handleDelete = async (todoId: number) => {
     try {
       await deleteTodo(todoId);
@@ -87,6 +93,7 @@ function App() {
     }
   };
 
+  // ステータス変更処理
   const handleStatusChange = async (
     todoId: number,
     newStatus: Todo["status"]
@@ -104,6 +111,15 @@ function App() {
       toastError("ステータスの更新に失敗しました");
     }
   };
+
+  // FilterStatus[] 型のオプション定義
+  const filterOptions: (FilterStatus & { label: string })[] = [
+    { kind: "all", label: "すべて" },
+    { kind: "status", value: "未着手", label: "未着手" },
+    { kind: "status", value: "進行中", label: "進行中" },
+    { kind: "status", value: "完了", label: "完了" },
+  ];
+
   return (
     <div className="app-container">
       {/* 共通ヘッダー */}
@@ -112,25 +128,30 @@ function App() {
         <ViewSwitch viewMode={viewMode} setViewMode={setViewMode} />
       </header>
 
+      {/* メインコンテンツ */}
       <main className="app-main">
-        {viewMode === "board" ? (
+        {viewMode.type === "board" ? (
           <JiraBoard todos={todos} onStatusChange={handleStatusChange} />
         ) : (
           <>
             <div className="status-filter-bar">
-              {["すべて", "未着手", "進行中", "完了"].map((status) => (
-                <button
-                  key={status}
-                  className={`status-filter-btn ${
-                    filterStatus === status ? "active" : ""
-                  }`}
-                  onClick={() =>
-                    setFilterStatus(status as "すべて" | Todo["status"])
-                  }
-                >
-                  {status}
-                </button>
-              ))}
+              {filterOptions.map((filter) => {
+                const isActive =
+                  filterStatus.kind === filter.kind &&
+                  (filter.kind === "all"
+                    ? true
+                    : filterStatus.kind === "status" &&
+                      filterStatus.value === filter.value);
+                return (
+                  <button
+                    key={filter.label}
+                    className={`status-filter-btn ${isActive ? "active" : ""}`}
+                    onClick={() => setFilterStatus(filter)}
+                  >
+                    {filter.label}
+                  </button>
+                );
+              })}
             </div>
 
             <TodoInput
@@ -142,12 +163,8 @@ function App() {
             <TodoList
               todos={todos}
               filterStatus={filterStatus}
-              editingId={editingId}
-              editingText={editingText}
-              editingStatus={editingStatus}
-              setEditingId={setEditingId}
-              setEditingText={setEditingText}
-              setEditingStatus={setEditingStatus}
+              editing={editing}
+              setEditing={setEditing}
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
             />
@@ -164,4 +181,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
