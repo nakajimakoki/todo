@@ -18,12 +18,14 @@ import {
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTodo, setNewTodo] = useState("");
+  const [newTodo, setNewTodo] = useState<string>("");
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingText, setEditingText] = useState("");
-  const [editingStatus, setEditingStatus] = useState("");
-  const [filterStatus, setFilterStatus] = useState("すべて");
-  const [viewMode, setViewMode] = useState("list");
+  const [editingText, setEditingText] = useState<string>("");
+  const [editingStatus, setEditingStatus] = useState<Todo["status"]>("未着手");
+  const [filterStatus, setFilterStatus] = useState<"すべて" | Todo["status"]>(
+    "すべて"
+  );
+  const [viewMode, setViewMode] = useState<"list" | "board">("list");
 
   useEffect(() => {
     (async () => {
@@ -94,7 +96,10 @@ function App() {
           </div>
           <JiraBoard
             todos={todos}
-            onStatusChange={async (todoId: number, newStatus: string) => {
+            onStatusChange={async (
+              todoId: number,
+              newStatus: Todo["status"]
+            ) => {
               const todo = todos.find((t) => t.id === todoId);
               if (!todo || todo.status === newStatus) return;
               try {
@@ -126,7 +131,9 @@ function App() {
                 className={`status-filter-btn status-filter-btn-${status} ${
                   filterStatus === status ? "active" : ""
                 }`}
-                onClick={() => setFilterStatus(status)}
+                onClick={() =>
+                  setFilterStatus(status as "すべて" | Todo["status"])
+                }
                 type="button"
               >
                 {status}

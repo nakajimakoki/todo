@@ -4,8 +4,8 @@ import React from "react";
 type ViewMode = "list" | "board";
 
 type ViewSwitchProps = {
-  viewMode: ViewMode,
-  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>,
+  viewMode: ViewMode;
+  setViewMode: React.Dispatch<React.SetStateAction<ViewMode>>;
 };
 
 export default function ViewSwitch({ viewMode, setViewMode }: ViewSwitchProps) {
