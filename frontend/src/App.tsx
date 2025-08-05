@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Todo } from "./types/todo";
 import JiraBoard from "./JiraBoard";
 import ViewSwitch from "./components/ViewSwitch";
 import TodoInput from "./components/TodoInput";
@@ -16,9 +17,9 @@ import {
 } from "./api/todoService";
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
-  const [editingId, setEditingId] = useState(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
   const [editingStatus, setEditingStatus] = useState("");
   const [filterStatus, setFilterStatus] = useState("すべて");
@@ -51,7 +52,7 @@ function App() {
     }
   };
 
-  const handleUpdate = async (todo) => {
+  const handleUpdate = async (todo: Todo) => {
     const error = validateTodoInput(editingText);
     if (error) {
       toastError(error);
@@ -74,7 +75,7 @@ function App() {
     }
   };
 
-  const handleDelete = async (todoId) => {
+  const handleDelete = async (todoId: number) => {
     try {
       await deleteTodo(todoId);
       setTodos((prev) => prev.filter((t) => t.id !== todoId));
@@ -93,7 +94,7 @@ function App() {
           </div>
           <JiraBoard
             todos={todos}
-            onStatusChange={async (todoId, newStatus) => {
+            onStatusChange={async (todoId: number, newStatus: string) => {
               const todo = todos.find((t) => t.id === todoId);
               if (!todo || todo.status === newStatus) return;
               try {
