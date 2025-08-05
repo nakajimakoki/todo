@@ -5,6 +5,7 @@ import {
   Droppable,
   Draggable,
   DropResult,
+  DraggableProvided,
 } from "@hello-pangea/dnd";
 import { Todo } from "./types/todo";
 
@@ -24,7 +25,7 @@ const STATUS_LIST: Status[] = [
 type JiraCardProps = {
   todo: Todo;
   status: Status;
-  provided: any; // 型が複雑なので any でOK。厳密にするなら DraggableProvided
+  provided: DraggableProvided; // 型が複雑なので any でOK。厳密にするなら DraggableProvided
 };
 
 function JiraCard({ todo, status, provided }: JiraCardProps) {
@@ -35,24 +36,9 @@ function JiraCard({ todo, status, provided }: JiraCardProps) {
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      {/* カラーライン */}
-      <div
-        className="jira-board-card-line"
-        style={{ background: status.color }}
-      />
       <div className="jira-board-card-content">
-        {todo.tag && (
-          <span
-            className="jira-board-card-badge"
-            style={{ background: "#e0e7ff", color: "#3730a3" }}
-          >
-            {todo.tag}
-          </span>
-        )}
+        {todo.tag && <span className="jira-board-card-badge">{todo.tag}</span>}
         <div className="jira-board-card-title">{todo.title}</div>
-        <div className="jira-board-card-id">
-          {todo.taskId || `TIS-${todo.id}`}
-        </div>
       </div>
     </div>
   );
@@ -74,12 +60,7 @@ function JiraColumn({ status, todos }: JiraColumnProps) {
           {...provided.droppableProps}
         >
           <div className="jira-board-column-header">
-            <span
-              className="jira-board-column-title"
-              style={{ color: status.color }}
-            >
-              {status.label}
-            </span>
+            <span className="jira-board-column-title">{status.label}</span>
             <span className="jira-board-column-count">{todos.length}</span>
           </div>
           <div className="jira-board-cards">
