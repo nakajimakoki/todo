@@ -1,0 +1,383 @@
+/* =========================================
+   全体レイアウト
+========================================= */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f2f3f5;
+  color: #333;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* =========================================
+   ヘッダー
+========================================= */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 16px 32px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.app-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 0;
+  color: #222;
+}
+
+.view-switch-bar {
+  display: flex;
+  gap: 12px;
+}
+
+.view-switch-btn {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f8f8f8;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.view-switch-btn:hover {
+  background: #e0e0e0;
+}
+
+.view-switch-btn.active {
+  background: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+  font-weight: bold;
+}
+
+/* =========================================
+   メインコンテンツ
+========================================= */
+.app-main {
+  flex: 1;
+  padding: 24px 32px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   ステータスフィルター
+========================================= */
+.status-filter-bar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.status-filter-btn {
+  padding: 8px 20px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background: #e0e0e0;
+  color: #555;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.status-filter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.status-filter-btn.active {
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* ステータスごとの色 */
+.status-filter-btn-すべて {
+  background: #bdbdbd;
+}
+.status-filter-btn-すべて.active {
+  background: #757575;
+}
+
+.status-filter-btn-未着手 {
+  background: #ffeaea;
+  color: #d32f2f;
+}
+.status-filter-btn-未着手.active {
+  background: #ffb3b3;
+  color: #b71c1c;
+}
+
+.status-filter-btn-進行中 {
+  background: #fff8e1;
+  color: #ffb300;
+}
+.status-filter-btn-進行中.active {
+  background: #ffe082;
+  color: #ff9800;
+}
+
+.status-filter-btn-完了 {
+  background: #f0f0f0;
+  color: #555;
+}
+.status-filter-btn-完了.active {
+  background: #bdbdbd;
+  color: #222;
+}
+
+/* =========================================
+   ToDo入力フォーム
+========================================= */
+.todo-input-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+.todo-input:focus {
+  background: #fff;
+  border-color: #4caf50;
+  outline: none;
+}
+
+.todo-add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1.4rem;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.todo-add-button:hover {
+  background: #43a047;
+  transform: scale(1.08);
+}
+
+/* =========================================
+   ToDoリスト
+========================================= */
+.todo-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.todo-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.todo-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.todo-item.completed {
+  background: #f9fafb;
+  border-left: 5px solid #4caf50;
+}
+
+/* =========================================
+   ToDo上段（タイトル + ステータス + 日付）
+========================================= */
+.todo-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.todo-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  word-break: break-word;
+}
+
+.todo-title-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.todo-title-text.completed {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.todo-status {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 12px;
+  background-clip: padding-box;
+  margin-bottom: 6px;
+  line-height: 1.2;
+  max-width: max-content;
+  white-space: nowrap;
+}
+
+.status-未着手 {
+  background: #ffeaea;
+  color: #d32f2f;
+}
+.status-進行中 {
+  background: #fff3cd;
+  color: #856404;
+}
+.status-完了 {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.todo-dates {
+  font-size: 0.8rem;
+  color: #666;
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* =========================================
+   ToDo下段（フッターに操作ボタン）
+========================================= */
+.todo-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.icon-button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  font-size: 1rem; /* ボタンを小さめに */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.icon-button:hover {
+  background: #e6e6e6;
+  transform: scale(1.05);
+}
+
+.edit-button {
+  color: #4c607a;
+}
+.edit-button:hover {
+  color: #2d3f53;
+}
+
+.delete-button {
+  color: #a94442;
+}
+.delete-button:hover {
+  color: #7b2c2c;
+}
+
+/* =========================================
+   編集モードの入力・ボタン
+========================================= */
+.todo-edit-input {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.2s ease;
+}
+
+.todo-edit-input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 4px rgba(76, 175, 80, 0.3);
+  outline: none;
+}
+
+.save-button,
+.cancel-button {
+  padding: 6px 12px;
+  font-size: 0.85rem; /* 小さめ文字 */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* 保存ボタン */
+.save-button.unchanged {
+  background: #ccc;
+  color: #333;
+  cursor: default;
+}
+
+.save-button.changed {
+  background: #4caf50;
+  color: #fff;
+}
+
+.save-button.changed:hover {
+  background: #43a047;
+  transform: translateY(-1px);
+}
+
+/* キャンセルボタン */
+.cancel-button {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background: #ccc;
+  transform: translateY(-1px);
+}

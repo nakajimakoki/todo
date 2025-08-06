@@ -1,9 +1,9 @@
 /**
  * ToDo入力用バリデーション
- * @param {string} text 入力された文字列
- * @returns {string|null} エラーがあればメッセージ、なければ null
+ * @param text 入力された文字列
+ * @returns エラーがあればメッセージ、なければ null
  */
-export const validateTodoInput = (text) => {
+export const validateTodoInput = (text: string): string | null => {
   if (!text.trim()) {
     return "内容を入力してください";
   }
